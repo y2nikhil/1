@@ -209,6 +209,7 @@ function deleteTask(button) {
     trackMetrics('delete');
 }
 // Timer Functionality (unchanged)
+let timers = {};
 function startTimer(button) {
     const timerDisplay = button.parentElement.previousElementSibling;
     const taskId = button.closest('.task').id;
@@ -578,4 +579,3 @@ window.onload = function () {
     console.log("Window loaded. Running loadTasks...");
     loadTasks();
 };
-
