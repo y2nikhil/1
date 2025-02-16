@@ -141,15 +141,21 @@ function createTaskElement(text, priorityColor, dueDate) {
     return task;
 }
 function addTask() {
+    console.log("Adding new task...");
+    
     const taskText = document.getElementById('task-input').value.trim();
     const priorityColor = document.getElementById('priority-input').value;
+
     if (!taskText) return alert('Please enter a task!');
+
     const task = createTaskElement(taskText, priorityColor);
     document.getElementById('todo').appendChild(task);
     document.getElementById('task-input').value = '';
-    saveTasks();
-    trackMetrics('add');
+
+    saveTasks(); // 🔥 Ensure tasks are saved
+    console.log("Task added and saved.");
 }
+
 function addScheduledTask() {
     const taskText = document.getElementById('task-for-date').value.trim();
     const dueDateTime = document.getElementById('task-datetime').value;
@@ -303,6 +309,8 @@ function loadMetrics() {
 }
 // Save/Load Tasks (unchanged)
 function saveTasks() {
+    console.log("Saving tasks...");
+
     const tasks = {
         todo: Array.from(document.getElementById('todo').children).map(task => ({
             text: task.querySelector('.task-content p')?.textContent || '',
@@ -321,13 +329,25 @@ function saveTasks() {
         }))
     };
 
+    console.log("TASKS OBJECT:", tasks); // Debugging: Checking if tasks exist
+
     localStorage.setItem('tasks', JSON.stringify(tasks));
+
     console.log("Tasks saved:", localStorage.getItem('tasks')); // Debugging Log
 }
 
+
 function loadTasks() {
+    console.log("Loading tasks...");
+
     const saved = localStorage.getItem('tasks');
-    if (!saved) return;
+    
+    if (!saved) {
+        console.warn("No saved tasks found in localStorage.");
+        return;
+    }
+
+    console.log("Retrieved from localStorage:", saved);
 
     const taskData = JSON.parse(saved);
 
@@ -346,8 +366,9 @@ function loadTasks() {
         });
     });
 
-    console.log("Tasks loaded successfully!"); // Debugging Log
+    console.log("Tasks loaded successfully!");
 }
+
 
 // Calendar Functions (unchanged)
 function openCalendar() {
@@ -540,5 +561,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 window.onload = function () {
+    console.log("Window loaded. Running loadTasks...");
     loadTasks();
 };
+
