@@ -530,8 +530,8 @@ function showNotification(title, message) {
 
 // Play Notification Sound
 function playNotificationSound() {
-    const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2592/2592-preview.mp3'); // Add a sound file URL
-    audio.play(https://assets.mixkit.co/active_storage/sfx/2592/2592-preview.mp3);
+    const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2993/2993-preview.mp3'); // Add a sound file URL
+    audio.play();
 }
 
 // FAB Menu Toggle
