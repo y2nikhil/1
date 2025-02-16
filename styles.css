@@ -119,11 +119,11 @@ h1 {
 }
 .task-controls button:hover {
     background: var(--secondary);
-    color: rgb(204, 135, 135);
+    color: white;
 }
 .task-actions {
     position: absolute;
-    top: 0px;
+    top: 15px;
     right: 15px;
     display: flex;
     gap: 8px;
@@ -143,7 +143,6 @@ h1 {
     width: auto; /* Auto width to fit content */
     text-align: center; /* Center text */
 }
-
 .move-btn:hover {
     background: var(--secondary);
 }
@@ -287,13 +286,11 @@ body.dark-mode #priority-input:hover, body.dark-mode #priority-input:focus {
     text-align: center;
     margin: 10px 0;
 }
-
 #current-day {
     font-size: 1.5em;
     font-weight: bold;
     margin: 0;
 }
-
 #current-date {
     font-size: 1em;
     color: #666;
@@ -312,26 +309,21 @@ body.dark-mode #priority-input:hover, body.dark-mode #priority-input:focus {
     z-index: 1000; /* Ensure it's above other content */
     transition: transform 0.3s ease;
 }
-
 .menu-icon.active {
     transform: rotate(90deg); /* Rotate icon when menu is open */
 }
-
 .bar {
     height: 3px;
     width: 100%;
     background-color: var(--primary); /* Use primary color */
     transition: all 0.3s ease;
 }
-
 .menu-icon.active .bar:nth-child(1) {
     transform: translateY(8px) rotate(45deg); /* Animate first bar */
 }
-
 .menu-icon.active .bar:nth-child(2) {
     opacity: 0; /* Hide middle bar */
 }
-
 .menu-icon.active .bar:nth-child(3) {
     transform: translateY(-8px) rotate(-45deg); /* Animate third bar */
 }
@@ -346,22 +338,18 @@ body.dark-mode #priority-input:hover, body.dark-mode #priority-input:focus {
     opacity: 0;
     z-index: 999; /* Ensure it's above other content */
 }
-
 .nav-menu.active {
     max-height: 300px; /* Expand to fit content */
     opacity: 1;
 }
-
 .nav-menu ul {
     list-style: none;
     padding: 10px 0; /* Add padding for spacing */
     margin: 0;
 }
-
 .nav-menu ul li {
     margin: 8px 0; /* Add margin between buttons */
 }
-
 /* Base Bubble Button Styles */
 .bubble {
     padding: 12px 20px;
@@ -378,65 +366,52 @@ body.dark-mode #priority-input:hover, body.dark-mode #priority-input:focus {
     font-weight: 500;
     cursor: pointer;
 }
-
 .bubble:hover {
     transform: translateY(-5px); /* Slight hover animation */
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15); /* Add shadow on hover */
 }
-
 /* Individual Button Styles */
 .about-btn {
     background-color: #917FB3; /* Custom color for About */
     color: white; /* Text color */
 }
-
 .about-btn:hover {
     background-color: #7A6A9B; /* Hover color for About */
 }
-
 .features-btn {
     background-color: #E5BEEC; /* Custom color for Features */
     color: var(--text); /* Text color */
 }
-
 .features-btn:hover {
     background-color: #D8A9E0; /* Hover color for Features */
 }
-
 .contact-btn {
     background-color: #2A2F4F; /* Custom color for Contact */
     color: white; /* Text color */
 }
-
 .contact-btn:hover {
     background-color: #1E2238; /* Hover color for Contact */
 }
-
 .help-btn {
     background-color: #FDE2F3; /* Custom color for Help */
     color: var(--text); /* Text color */
 }
-
 .help-btn:hover {
     background-color: #F0D5E3; /* Hover color for Help */
 }
-
 /* Dark Mode Support */
 body.dark-mode .about-btn {
     background-color: #7A6A9B; /* Dark mode color for About */
     color: rgb(222, 167, 130);
 }
-
 body.dark-mode .features-btn {
     background-color: #D8A9E0; /* Dark mode color for Features */
     color: var(--text);
 }
-
 body.dark-mode .contact-btn {
     background-color: #1E2238; /* Dark mode color for Contact */
     color: rgb(219, 168, 168);
 }
-
 body.dark-mode .help-btn {
     background-color: #e98dbc; /* Dark mode color for Help */
     color: var(--text);
@@ -451,7 +426,6 @@ body.dark-mode .help-btn {
     transition: all 0.2s ease;
     cursor: grab;
 }
-
 .task:hover {
     box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
     transform: scale(1.02);
@@ -465,7 +439,6 @@ body.dark-mode .help-btn {
     border-radius: 4px; /* Rounded corners */
     display: inline-block; /* Ensure it doesn't stretch full width */
 }
-
 body.dark-mode .task-timer {
     background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent black background */
     color: var(--text); /* Use the text color variable */
@@ -484,11 +457,9 @@ body.dark-mode .task-timer {
     align-items: center;
     z-index: 1000;
 }
-
 .modal.active {
     display: flex;
 }
-
 .modal-content {
     background-color: white;
     padding: 20px;
@@ -497,7 +468,6 @@ body.dark-mode .task-timer {
     max-width: 400px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
-
 .timer-option {
     padding: 10px 20px;
     border-radius: 8px;
@@ -510,12 +480,10 @@ body.dark-mode .task-timer {
     text-align: center;
     transition: all 0.3s ease;
 }
-
 .timer-option:hover {
     background-color: var(--secondary);
     transform: scale(1.05);
 }
-
 /* Global Timer */
 .global-timer {
     position: fixed;
@@ -530,11 +498,9 @@ body.dark-mode .task-timer {
     gap: 10px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
-
 .global-timer.active {
     display: flex;
 }
-
 .global-timer button {
     background: none;
     border: none;
@@ -542,7 +508,6 @@ body.dark-mode .task-timer {
     cursor: pointer;
     font-size: 1.2em;
 }
-
 /* Floating Action Button */
 .fab-container {
     position: fixed;
@@ -550,7 +515,6 @@ body.dark-mode .task-timer {
     right: 20px;
     z-index: 1000;
 }
-
 .fab {
     width: 60px;
     height: 60px;
@@ -565,12 +529,10 @@ body.dark-mode .task-timer {
     align-items: center;
     justify-content: center;
 }
-
 .fab:hover {
     background-color: var(--secondary);
     transform: scale(1.1);
 }
-
 .fab-menu {
     position: absolute;
     bottom: 70px;
@@ -579,11 +541,9 @@ body.dark-mode .task-timer {
     flex-direction: column;
     gap: 10px;
 }
-
 .fab-menu.active {
     display: flex;
 }
-
 .fab-option {
     padding: 10px 20px;
     border-radius: 25px;
@@ -597,7 +557,6 @@ body.dark-mode .task-timer {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     transition: all 0.3s ease;
 }
-
 .fab-option:hover {
     background-color: var(--secondary);
     transform: translateX(-10px);
@@ -619,11 +578,9 @@ body.dark-mode .task-timer {
     user-select: none;
     z-index: 1000; /* Ensure it’s above other elements */
 }
-
 .global-timer.active {
     display: flex;
 }
-
 .global-timer button {
     background: none;
     border: none;
