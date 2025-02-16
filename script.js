@@ -317,7 +317,6 @@ function saveTasks() {
             timer: task.querySelector('.task-timer').textContent  // Save timer state
         }))
     };
-
     localStorage.setItem('tasks', JSON.stringify(tasks));
 }
 
@@ -326,25 +325,24 @@ function loadTasks() {
     if (!saved) return;
 
     const taskData = JSON.parse(saved);
-
     ['todo', 'in-progress', 'done'].forEach(status => {
         const column = document.getElementById(status);
-        column.innerHTML = ''; // Clear existing tasks
+        column.innerHTML = '';
         taskData[status].forEach(task => {
             const taskElement = createTaskElement(task.text, task.priority, task.dueDate);
-            taskElement.querySelector('.task-timer').textContent = task.timer; // Load saved timer state
+            taskElement.querySelector('.task-timer').textContent = task.timer;
             column.appendChild(taskElement);
         });
     });
 }
 
+
+
 // Initialize the tasks when the page loads
 window.onload = function () {
     loadTasks();
-    if(localStorage.getItem('darkMode') === 'true') toggleDarkMode();
+    if (localStorage.getItem('darkMode') === 'true') toggleDarkMode();
     loadMetrics();
-};
-
 // Calendar Functions (unchanged)
 function openCalendar() {
     document.querySelector('.calendar-modal').style.display = 'block';
