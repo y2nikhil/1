@@ -1,4 +1,3 @@
-
 // Chart Configuration
 const ctx = document.getElementById('analyticsChart').getContext('2d');
 const analyticsChart = new Chart(ctx, {
@@ -130,12 +129,6 @@ function createTaskElement(text, priorityColor, dueDate) {
     `;
     return task;
 }
-// Add this event listener to detect the "Enter" key press
-document.getElementById('task-input').addEventListener('keypress', function (event) {
-    if (event.key === 'Enter') { // Check if the pressed key is "Enter"
-        addTask(); // Call the addTask function
-    }
-});
 function addTask() {
     const taskText = document.getElementById('task-input').value.trim();
     const priorityColor = document.getElementById('priority-input').value;
@@ -444,23 +437,17 @@ function closeTimerOptionsModal() {
 // Countdown Timer
 let countdownInterval;
 let countdownTime = 0;
-let isNotificationShown = false; // Flag to track if notification has been shown
-
 function startCountdownTimer(minutes) {
     countdownTime = minutes * 60;
-    isNotificationShown = false; // Reset the flag when starting a new timer
     closeTimerOptionsModal();
     const globalTimer = document.getElementById('global-timer');
     globalTimer.classList.add('active');
     countdownInterval = setInterval(() => {
         if (countdownTime <= 0) {
             clearInterval(countdownInterval);
-            if (!isNotificationShown) { // Ensure notification is shown only once
-                showNotification('Timer Complete', 'Your timer has ended!');
-                playNotificationSound();
-                alert('Timer Complete!'); // Forced alert
-                isNotificationShown = true; // Set the flag to true
-            }
+            showNotification('Timer Complete', 'Your timer has ended!');
+            playNotificationSound();
+            alert('Timer Complete!'); // Forced alert
             globalTimer.classList.remove('active');
             return;
         }
@@ -532,10 +519,3 @@ document.addEventListener('DOMContentLoaded', () => {
         globalTimer.style.cursor = 'grab';
     });
 });
-function resetApp() {
-    const confirmReset = confirm("Are you sure you want to reset the app? This will delete all tasks and data.");
-    if (confirmReset) {
-        localStorage.clear();
-        window.location.reload(true);
-    }
-}
