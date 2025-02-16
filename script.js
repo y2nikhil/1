@@ -36,12 +36,14 @@ const analyticsChart = new Chart(ctx, {
         }
     }
 });
+
 // Application State
 let metrics = {
     completedTasks: 0,
     timeSpent: 0,
     taskStats: {} // This will store time spent per task
 };
+
 // Dark Mode Toggle (unchanged)
 function toggleDarkMode() {
     document.body.classList.toggle('dark-mode');
@@ -50,16 +52,19 @@ function toggleDarkMode() {
     analyticsChart.options.scales.x.ticks.color = document.body.classList.contains('dark-mode') ? '#FDE2F3' : '#2A2F4F';
     analyticsChart.update();
 }
+
 // Share Snapshot (unchanged)
 async function shareSnapshot() {
     const stamp = document.getElementById('snapshot-stamp');
     stamp.textContent = new Date().toLocaleString();
     stamp.style.display = 'block';
+
     // Temporarily adjust the body and HTML to fit all content
     const originalBodyOverflow = document.body.style.overflow;
     const originalHtmlOverflow = document.documentElement.style.overflow;
     document.body.style.overflow = 'visible';
     document.documentElement.style.overflow = 'visible';
+
     // Calculate the full width and height of the document
     const fullWidth = Math.max(
         document.body.scrollWidth,
@@ -68,6 +73,7 @@ async function shareSnapshot() {
         document.documentElement.offsetWidth,
         document.documentElement.clientWidth
     );
+
     const fullHeight = Math.max(
         document.body.scrollHeight,
         document.documentElement.scrollHeight,
@@ -75,6 +81,7 @@ async function shareSnapshot() {
         document.documentElement.offsetHeight,
         document.documentElement.clientHeight
     );
+
     // Use html2canvas to capture the entire page
     html2canvas(document.body, {
         width: fullWidth,
@@ -87,9 +94,11 @@ async function shareSnapshot() {
         allowTaint: true, // Enable if you have tainted images
     }).then(canvas => {
         stamp.style.display = 'none';
+
         // Reset the body and HTML overflow styles
         document.body.style.overflow = originalBodyOverflow;
         document.documentElement.style.overflow = originalHtmlOverflow;
+
         // Create a link to download the snapshot
         const link = document.createElement('a');
         link.href = canvas.toDataURL();
@@ -98,6 +107,7 @@ async function shareSnapshot() {
     }).catch(error => {
         console.error('Error capturing snapshot:', error);
         stamp.style.display = 'none';
+
         // Reset the body and HTML overflow styles in case of error
         document.body.style.overflow = originalBodyOverflow;
         document.documentElement.style.overflow = originalHtmlOverflow;
@@ -129,6 +139,7 @@ function createTaskElement(text, priorityColor, dueDate) {
     `;
     return task;
 }
+
 function addTask() {
     const taskText = document.getElementById('task-input').value.trim();
     const priorityColor = document.getElementById('priority-input').value;
@@ -139,6 +150,7 @@ function addTask() {
     saveTasks();
     trackMetrics('add');
 }
+
 function addScheduledTask() {
     const taskText = document.getElementById('task-for-date').value.trim();
     const dueDateTime = document.getElementById('task-datetime').value;
@@ -149,6 +161,7 @@ function addScheduledTask() {
     saveTasks();
     trackMetrics('add');
 }
+
 function moveTask(button) {
     const task = button.closest('.task');
     const currentColumn = task.parentElement.id;
@@ -161,6 +174,7 @@ function moveTask(button) {
     }
     saveTasks();
 }
+
 function celebrateTask(task) {
     const emojis = ['🎆', '🎊', '🎉'];
     emojis.forEach((emoji, index) => {
@@ -176,6 +190,7 @@ function celebrateTask(task) {
         }, index * 300);
     });
 }
+
 function editTask(button) {
     const task = button.closest('.task');
     const currentText = task.querySelector('p').textContent;
@@ -185,12 +200,14 @@ function editTask(button) {
         saveTasks();
     }
 }
+
 function deleteTask(button) {
     const task = button.closest('.task');
     task.remove();
     saveTasks();
     trackMetrics('delete');
 }
+
 // Timer Functionality (unchanged)
 let timers = {};
 function startTimer(button) {
@@ -207,16 +224,19 @@ function startTimer(button) {
         timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
     }, 1000);
 }
+
 function pauseTimer(button) {
     const taskId = button.closest('.task').id;
     clearInterval(timers[taskId]);
 }
+
 function resetTimer(button) {
     const timerDisplay = button.parentElement.previousElementSibling;
     const taskId = button.closest('.task').id;
     timerDisplay.textContent = '00:00';
     clearInterval(timers[taskId]);
 }
+
 // Metrics Tracking
 function trackMetrics(action, task) {
     const taskName = task ? task.querySelector('p').textContent : null;
@@ -237,11 +257,13 @@ function trackMetrics(action, task) {
     updateMetrics();
     saveMetrics();
 }
+
 function updateMetrics() {
     console.log('Updating metrics...');
     console.log('Total Tasks:', metrics.totalTasks);
     console.log('Completed Tasks:', metrics.completedTasks);
     console.log('Time Spent:', metrics.timeSpent);
+
     function updateDayAndDate() {
         const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -263,35 +285,40 @@ function updateMetrics() {
     
     // Call the function to update the day and date when the page loads
     updateDayAndDate();
+
     const completedTasksElement = document.getElementById('completed-tasks');
     if (completedTasksElement) {
         completedTasksElement.querySelector('p').textContent = metrics.completedTasks;
     } else {
         console.error('Element with ID "completed-tasks" not found.');
     }
+
     const avgTimeElement = document.getElementById('avg-time');
     if (avgTimeElement) {
         avgTimeElement.querySelector('p').textContent = `${Math.round(metrics.timeSpent)}m`;
     } else {
         console.error('Element with ID "avg-time" not found.');
     }
+
     // Update the chart with task names and time spent
     const taskNames = Object.keys(metrics.taskStats);
     analyticsChart.data.labels = taskNames;
     analyticsChart.data.datasets[0].data = taskNames.map(task => metrics.taskStats[task]);
     analyticsChart.update();
 }
+
 // Save/Load Metrics
 function saveMetrics() {
     localStorage.setItem('taskMetrics', JSON.stringify(metrics));
 }
+
 function loadMetrics() {
     const saved = localStorage.getItem('taskMetrics');
     if (saved) metrics = JSON.parse(saved);
     updateMetrics();
 }
+
 // Save/Load Tasks (unchanged)
-// Save tasks to local storage
 function saveTasks() {
     const tasks = {
         todo: Array.from(document.getElementById('todo').children).map(task => ({
@@ -310,39 +337,41 @@ function saveTasks() {
             dueDate: task.querySelector('small') ? task.querySelector('small').textContent.replace('Due: ', '') : null
         }))
     };
-    localStorage.setItem('tasks', JSON.stringify(tasks)); // Save tasks to local storage
+
+    localStorage.setItem('tasks', JSON.stringify(tasks));
 }
 
-// Load tasks from local storage
 function loadTasks() {
     const saved = localStorage.getItem('tasks');
-    if (!saved) return; // Exit if no tasks are saved
+    if (!saved) return;
 
     const taskData = JSON.parse(saved);
 
     ['todo', 'in-progress', 'done'].forEach(status => {
         const column = document.getElementById(status);
-        column.innerHTML = ''; // Clear existing tasks
+        column.innerHTML = ''; // Purane tasks hatao
         taskData[status].forEach(task => {
             const taskElement = createTaskElement(task.text, task.priority, task.dueDate);
             column.appendChild(taskElement);
         });
     });
 }
+window.onload = function () {
+    loadTasks();
+};
 
-// Initialize the app
-if (localStorage.getItem('darkMode') === 'true') toggleDarkMode();
-loadMetrics();
-loadTasks(); // Load tasks from local storage when the page loads
+
 // Calendar Functions (unchanged)
 function openCalendar() {
     document.querySelector('.calendar-modal').style.display = 'block';
     document.querySelector('.overlay').style.display = 'block';
 }
+
 function closeCalendar() {
     document.querySelector('.calendar-modal').style.display = 'none';
     document.querySelector('.overlay').style.display = 'none';
 }
+
 // Drag & Drop (unchanged)
 let draggedTask = null;
 document.querySelectorAll('.column').forEach(column => {
@@ -361,18 +390,21 @@ document.querySelectorAll('.column').forEach(column => {
         }
     });
 });
+
 document.addEventListener('dragstart', e => {
     if (e.target.classList.contains('task')) {
         draggedTask = e.target;
         setTimeout(() => e.target.style.opacity = '0.5', 0);
     }
 });
+
 document.addEventListener('dragend', e => {
     if (e.target.classList.contains('task')) {
         e.target.style.opacity = '1';
         draggedTask = null;
     }
 });
+
 // Initialize (unchanged)
 if(localStorage.getItem('darkMode') === 'true') toggleDarkMode();
 loadMetrics();
@@ -383,6 +415,7 @@ function toggleMenu() {
     menuIcon.classList.toggle('active');
     navMenu.classList.toggle('active');
 }
+
 // Close menu when clicking outside
 document.addEventListener('click', (event) => {
     const menuIcon = document.querySelector('.menu-icon');
@@ -399,16 +432,19 @@ function getRandomColor() {
     var b = Math.floor(Math.random() * 156) + 100; // Range: 100-255
     return `rgb(${r}, ${g}, ${b})`;
 }
+
 // Function to create a task element
 function createTaskElement(text, priorityColor, dueDate) {
     const task = document.createElement('div');
     task.className = 'task';
     task.id = `task-${Date.now()}`;
     task.draggable = true;
+
     // Apply a random light background color only in light mode
     if (!document.body.classList.contains('dark-mode')) {
         task.style.backgroundColor = getRandomColor();
     }
+
     task.innerHTML = `
         <div class="priority-dot" style="background: ${priorityColor}"></div>
         <div class="task-content">
@@ -422,31 +458,36 @@ function createTaskElement(text, priorityColor, dueDate) {
             </div>
         </div>
         <div class="task-actions">
-            <button class="action-btn" onclick="editTask(this)">✎ Edit</button>
-            <button class="action-btn" onclick="deleteTask(this)">✖ Delete</button>
+            <button class="action-btn" onclick="editTask(this)">✎</button>
+            <button class="action-btn" onclick="deleteTask(this)">✖</button>
         </div>
-        <button class="move-btn" onclick="moveTask(this)">→ Move</button>
+        <button class="move-btn" onclick="moveTask(this)" Move>→ </button>
     `;
     return task;
 }
 // Add this to your JavaScript
+
 // Timer Options Modal
 function openTimerOptions() {
     const modal = document.getElementById('timer-options-modal');
     modal.classList.add('active');
 }
+
 function closeTimerOptionsModal() {
     const modal = document.getElementById('timer-options-modal');
     modal.classList.remove('active');
 }
+
 // Countdown Timer
 let countdownInterval;
 let countdownTime = 0;
+
 function startCountdownTimer(minutes) {
     countdownTime = minutes * 60;
     closeTimerOptionsModal();
     const globalTimer = document.getElementById('global-timer');
     globalTimer.classList.add('active');
+
     countdownInterval = setInterval(() => {
         if (countdownTime <= 0) {
             clearInterval(countdownInterval);
@@ -456,6 +497,7 @@ function startCountdownTimer(minutes) {
             globalTimer.classList.remove('active');
             return;
         }
+
         const minutesLeft = Math.floor(countdownTime / 60);
         const secondsLeft = countdownTime % 60;
         document.getElementById('countdown-display').textContent = 
@@ -463,15 +505,18 @@ function startCountdownTimer(minutes) {
         countdownTime--;
     }, 1000);
 }
+
 function pauseCountdownTimer() {
     clearInterval(countdownInterval);
 }
+
 function resetCountdownTimer() {
     clearInterval(countdownInterval);
     countdownTime = 0;
     document.getElementById('countdown-display').textContent = '00:00';
     document.getElementById('global-timer').classList.remove('active');
 }
+
 // Show Notification
 function showNotification(title, message) {
     if (Notification.permission === 'granted') {
@@ -483,11 +528,13 @@ function showNotification(title, message) {
         console.warn('Notification permission not granted.');
     }
 }
+
 // Play Notification Sound
 function playNotificationSound() {
-    const audio = new Audio(); // Add a sound file URL
+    const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2993/2993-preview.mp3'); // Add a sound file URL
     audio.play();
 }
+
 // FAB Menu Toggle
 function toggleFabMenu() {
     const fabMenu = document.querySelector('.fab-menu');
@@ -497,6 +544,7 @@ function toggleFabMenu() {
 let isDragging = false;
 let offsetX = 0;
 let offsetY = 0;
+
 document.addEventListener('DOMContentLoaded', () => {
     const globalTimer = document.getElementById('global-timer');
     
@@ -510,6 +558,7 @@ document.addEventListener('DOMContentLoaded', () => {
         globalTimer.style.right = 'auto'; // Reset right/bottom
         globalTimer.style.bottom = 'auto';
     });
+
     // Move timer
     document.addEventListener('mousemove', (e) => {
         if (!isDragging) return;
@@ -518,12 +567,10 @@ document.addEventListener('DOMContentLoaded', () => {
         globalTimer.style.left = `${x}px`;
         globalTimer.style.top = `${y}px`;
     });
+
     // Stop dragging
     document.addEventListener('mouseup', () => {
         isDragging = false;
         globalTimer.style.cursor = 'grab';
     });
-});
-window.onload = function () {
-    loadTasks();
-};
+}); 
