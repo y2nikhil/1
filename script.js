@@ -291,6 +291,7 @@ function loadMetrics() {
     updateMetrics();
 }
 // Save/Load Tasks (unchanged)
+// Save tasks to local storage
 function saveTasks() {
     const tasks = {
         todo: Array.from(document.getElementById('todo').children).map(task => ({
@@ -309,20 +310,19 @@ function saveTasks() {
             dueDate: task.querySelector('small') ? task.querySelector('small').textContent.replace('Due: ', '') : null
         }))
     };
-
-    localStorage.setItem('tasks', JSON.stringify(tasks));
+    localStorage.setItem('tasks', JSON.stringify(tasks)); // Save tasks to local storage
 }
 
-
+// Load tasks from local storage
 function loadTasks() {
     const saved = localStorage.getItem('tasks');
-    if (!saved) return;
+    if (!saved) return; // Exit if no tasks are saved
 
     const taskData = JSON.parse(saved);
 
     ['todo', 'in-progress', 'done'].forEach(status => {
         const column = document.getElementById(status);
-        column.innerHTML = ''; // Purane tasks hatao
+        column.innerHTML = ''; // Clear existing tasks
         taskData[status].forEach(task => {
             const taskElement = createTaskElement(task.text, task.priority, task.dueDate);
             column.appendChild(taskElement);
@@ -330,6 +330,10 @@ function loadTasks() {
     });
 }
 
+// Initialize the app
+if (localStorage.getItem('darkMode') === 'true') toggleDarkMode();
+loadMetrics();
+loadTasks(); // Load tasks from local storage when the page loads
 // Calendar Functions (unchanged)
 function openCalendar() {
     document.querySelector('.calendar-modal').style.display = 'block';
