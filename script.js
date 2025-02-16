@@ -130,6 +130,12 @@ function createTaskElement(text, priorityColor, dueDate) {
     `;
     return task;
 }
+// Add this event listener to detect the "Enter" key press
+document.getElementById('task-input').addEventListener('keypress', function (event) {
+    if (event.key === 'Enter') { // Check if the pressed key is "Enter"
+        addTask(); // Call the addTask function
+    }
+});
 function addTask() {
     const taskText = document.getElementById('task-input').value.trim();
     const priorityColor = document.getElementById('priority-input').value;
