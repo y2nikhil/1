@@ -213,8 +213,11 @@ let timers = {};
 function startTimer(button) {
     const timerDisplay = button.parentElement.previousElementSibling;
     const taskId = button.closest('.task').id;
+    
     if (timers[taskId]) clearInterval(timers[taskId]);
+    
     let [minutes, seconds] = timerDisplay.textContent.split(':').map(Number);
+    
     timers[taskId] = setInterval(() => {
         seconds++;
         if (seconds === 60) {
@@ -222,18 +225,27 @@ function startTimer(button) {
             minutes++;
         }
         timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        
+        saveTasks(); // 🔥 Auto-save every second
     }, 1000);
 }
+
 function pauseTimer(button) {
     const taskId = button.closest('.task').id;
     clearInterval(timers[taskId]);
+    saveTasks(); // 🔥 Save the current time
 }
+
 function resetTimer(button) {
     const timerDisplay = button.parentElement.previousElementSibling;
     const taskId = button.closest('.task').id;
+    
     timerDisplay.textContent = '00:00';
     clearInterval(timers[taskId]);
+    
+    saveTasks(); // 🔥 Save the reset time
 }
+
 // Metrics Tracking
 function trackMetrics(action, task) {
     const taskName = task ? task.querySelector('p').textContent : null;
@@ -315,25 +327,25 @@ function saveTasks() {
         todo: Array.from(document.getElementById('todo').children).map(task => ({
             text: task.querySelector('.task-content p')?.textContent || '',
             priority: task.querySelector('.priority-dot')?.style.backgroundColor || '',
-            dueDate: task.querySelector('small') ? task.querySelector('small').dataset.due : null
+            dueDate: task.querySelector('small') ? task.querySelector('small').dataset.due : null,
+            timer: task.querySelector('.task-timer')?.textContent || "00:00" // 🔥 Save timer
         })),
         'in-progress': Array.from(document.getElementById('in-progress').children).map(task => ({
             text: task.querySelector('.task-content p')?.textContent || '',
             priority: task.querySelector('.priority-dot')?.style.backgroundColor || '',
-            dueDate: task.querySelector('small') ? task.querySelector('small').dataset.due : null
+            dueDate: task.querySelector('small') ? task.querySelector('small').dataset.due : null,
+            timer: task.querySelector('.task-timer')?.textContent || "00:00" // 🔥 Save timer
         })),
         done: Array.from(document.getElementById('done').children).map(task => ({
             text: task.querySelector('.task-content p')?.textContent || '',
             priority: task.querySelector('.priority-dot')?.style.backgroundColor || '',
-            dueDate: task.querySelector('small') ? task.querySelector('small').dataset.due : null
+            dueDate: task.querySelector('small') ? task.querySelector('small').dataset.due : null,
+            timer: task.querySelector('.task-timer')?.textContent || "00:00" // 🔥 Save timer
         }))
     };
 
-    console.log("TASKS OBJECT:", tasks); // Debugging: Checking if tasks exist
-
     localStorage.setItem('tasks', JSON.stringify(tasks));
-
-    console.log("Tasks saved:", localStorage.getItem('tasks')); // Debugging Log
+    console.log("Tasks saved with timers:", tasks);
 }
 
 
@@ -362,13 +374,16 @@ function loadTasks() {
                 task.priority,
                 task.dueDate
             );
+
+            // 🔥 Restore the saved timer value
+            taskElement.querySelector('.task-timer').textContent = task.timer;
+
             column.appendChild(taskElement);
         });
     });
 
-    console.log("Tasks loaded successfully!");
+    console.log("Tasks loaded successfully with timers!");
 }
-
 
 // Calendar Functions (unchanged)
 function openCalendar() {
