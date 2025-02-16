@@ -532,3 +532,10 @@ document.addEventListener('DOMContentLoaded', () => {
         globalTimer.style.cursor = 'grab';
     });
 });
+function resetApp() {
+    const confirmReset = confirm("Are you sure you want to reset the app? This will delete all tasks and data.");
+    if (confirmReset) {
+        localStorage.clear();
+        window.location.reload(true);
+    }
+}
