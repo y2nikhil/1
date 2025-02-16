@@ -520,3 +520,6 @@ document.addEventListener('DOMContentLoaded', () => {
         globalTimer.style.cursor = 'grab';
     });
 });
+window.onload = function () {
+    loadTasks();
+};
