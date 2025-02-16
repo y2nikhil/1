@@ -518,3 +518,4 @@ document.addEventListener('DOMContentLoaded', () => {
         isDragging = false;
         globalTimer.style.cursor = 'grab';
     });
+});
