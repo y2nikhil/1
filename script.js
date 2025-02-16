@@ -242,20 +242,32 @@ function startTimer(button) {
 
 
 function pauseTimer(button) {
-    const taskId = button.closest('.task').id;
-    clearInterval(timers[taskId]);
+    const task = button.closest('.task');
+    const taskId = task.id;
+
+    if (timers[taskId]) {
+        clearInterval(timers[taskId]); // 🛑 Stop only this task's timer
+        delete timers[taskId]; // Remove from active timers list
+    }
+
     saveTasks(); // 🔥 Save the current time
 }
 
 function resetTimer(button) {
-    const timerDisplay = button.parentElement.previousElementSibling;
-    const taskId = button.closest('.task').id;
-    
-    timerDisplay.textContent = '00:00';
-    clearInterval(timers[taskId]);
-    
+    const task = button.closest('.task');
+    const taskId = task.id;
+    const timerDisplay = task.querySelector('.task-timer');
+
+    // 🛑 Stop this specific task's timer
+    if (timers[taskId]) {
+        clearInterval(timers[taskId]);
+        delete timers[taskId];
+    }
+
+    timerDisplay.textContent = "00:00"; // Reset to zero
     saveTasks(); // 🔥 Save the reset time
 }
+
 
 // Metrics Tracking
 function trackMetrics(action, task) {
@@ -370,8 +382,6 @@ function loadTasks() {
         return;
     }
 
-    console.log("Retrieved from localStorage:", saved);
-
     const taskData = JSON.parse(saved);
 
     ['todo', 'in-progress', 'done'].forEach(status => {
@@ -385,6 +395,16 @@ function loadTasks() {
                 task.priority,
                 task.dueDate
             );
+
+            // 🔥 Restore saved timer value
+            taskElement.querySelector('.task-timer').textContent = task.timer;
+            column.appendChild(taskElement);
+        });
+    });
+
+    console.log("Tasks loaded successfully with timers!");
+}
+
 
             // 🔥 Restore the saved timer value
             taskElement.querySelector('.task-timer').textContent = task.timer;
