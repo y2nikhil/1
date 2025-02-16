@@ -209,26 +209,37 @@ function deleteTask(button) {
     trackMetrics('delete');
 }
 // Timer Functionality (unchanged)
-let timers = {};
 function startTimer(button) {
-    const timerDisplay = button.parentElement.previousElementSibling;
-    const taskId = button.closest('.task').id;
-    
-    if (timers[taskId]) clearInterval(timers[taskId]);
-    
+    const task = button.closest('.task');
+    const taskId = task.id;
+    const timerDisplay = task.querySelector('.task-timer');
+
+    if (!taskId) {
+        console.error("Task ID not found!");
+        return;
+    }
+
     let [minutes, seconds] = timerDisplay.textContent.split(':').map(Number);
-    
+
+    // 🛑 Stop any existing timer for this task (Only this task, not others!)
+    if (timers[taskId]) {
+        clearInterval(timers[taskId]);
+    }
+
+    // ✅ Start a new timer for this task
     timers[taskId] = setInterval(() => {
         seconds++;
         if (seconds === 60) {
             seconds = 0;
             minutes++;
         }
+
         timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-        
-        saveTasks(); // 🔥 Auto-save every second
+
+        saveTasks(); // 🔥 Auto-save timer progress
     }, 1000);
 }
+
 
 function pauseTimer(button) {
     const taskId = button.closest('.task').id;
