@@ -596,30 +596,62 @@ window.onload = function () {
     loadTasks();
 };
 // Add this function to your script.js
-function clearAllData() {
-    // Clear local storage
-    localStorage.clear();
+async function clearAllData() {
+    try {
+        // Clear localStorage
+        localStorage.clear();
 
-    // Reset metrics
-    metrics = {
-        completedTasks: 0,
-        timeSpent: 0,
-        taskStats: {}
-    };
+        // Clear sessionStorage (if used)
+        sessionStorage.clear();
 
-    // Reset the chart
-    analyticsChart.data.labels = [];
-    analyticsChart.data.datasets[0].data = [];
-    analyticsChart.update();
+        // Clear IndexedDB (if used)
+        if (window.indexedDB && window.indexedDB.databases) {
+            const databases = await window.indexedDB.databases();
+            for (const db of databases) {
+                window.indexedDB.deleteDatabase(db.name);
+            }
+        }
 
-    // Clear the task columns
-    document.getElementById('todo').innerHTML = '<h2>To Do</h2>';
-    document.getElementById('in-progress').innerHTML = '<h2>In Progress</h2>';
-    document.getElementById('done').innerHTML = '<h2>Completed</h2>';
+        // Clear service worker cache (if any)
+        if ('caches' in window) {
+            const cacheNames = await caches.keys();
+            for (const cacheName of cacheNames) {
+                await caches.delete(cacheName);
+            }
+        }
 
-    // Update the metrics display
-    updateMetrics();
+        // Clear cookies (if used)
+        const cookies = document.cookie.split(';');
+        for (const cookie of cookies) {
+            const eqPos = cookie.indexOf('=');
+            const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+            document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
+        }
 
-    // Force a page reload to ensure no old data is retained in memory
-    window.location.reload();
+        // Reset metrics
+        metrics = {
+            completedTasks: 0,
+            timeSpent: 0,
+            taskStats: {}
+        };
+
+        // Reset the chart
+        analyticsChart.data.labels = [];
+        analyticsChart.data.datasets[0].data = [];
+        analyticsChart.update();
+
+        // Clear the task columns
+        document.getElementById('todo').innerHTML = '<h2>To Do</h2>';
+        document.getElementById('in-progress').innerHTML = '<h2>In Progress</h2>';
+        document.getElementById('done').innerHTML = '<h2>Completed</h2>';
+
+        // Update the metrics display
+        updateMetrics();
+
+        // Force a hard reload to clear cache and reload the page
+        window.location.reload(true); // `true` forces a reload from the server, bypassing cache
+    } catch (error) {
+        console.error('Error clearing all data:', error);
+        alert('Failed to clear all data. Please try again.');
+    }
 }
