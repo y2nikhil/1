@@ -305,22 +305,24 @@ function loadMetrics() {
 function saveTasks() {
     const tasks = {
         todo: Array.from(document.getElementById('todo').children).map(task => ({
-            text: task.querySelector('.task-content p').textContent,
-            priority: task.querySelector('.priority-dot').dataset.priority,
+            text: task.querySelector('.task-content p')?.textContent || '',
+            priority: task.querySelector('.priority-dot')?.style.backgroundColor || '',
             dueDate: task.querySelector('small') ? task.querySelector('small').dataset.due : null
         })),
         'in-progress': Array.from(document.getElementById('in-progress').children).map(task => ({
-            text: task.querySelector('.task-content p').textContent,
-            priority: task.querySelector('.priority-dot').dataset.priority,
+            text: task.querySelector('.task-content p')?.textContent || '',
+            priority: task.querySelector('.priority-dot')?.style.backgroundColor || '',
             dueDate: task.querySelector('small') ? task.querySelector('small').dataset.due : null
         })),
         done: Array.from(document.getElementById('done').children).map(task => ({
-            text: task.querySelector('.task-content p').textContent,
-            priority: task.querySelector('.priority-dot').dataset.priority,
+            text: task.querySelector('.task-content p')?.textContent || '',
+            priority: task.querySelector('.priority-dot')?.style.backgroundColor || '',
             dueDate: task.querySelector('small') ? task.querySelector('small').dataset.due : null
         }))
     };
+
     localStorage.setItem('tasks', JSON.stringify(tasks));
+    console.log("Tasks saved:", localStorage.getItem('tasks')); // Debugging Log
 }
 
 function loadTasks() {
@@ -331,17 +333,22 @@ function loadTasks() {
 
     ['todo', 'in-progress', 'done'].forEach(status => {
         const column = document.getElementById(status);
-        column.innerHTML = '';
+        if (!column) return;
+        column.innerHTML = ''; // Clear column before loading saved tasks
+
         taskData[status].forEach(task => {
             const taskElement = createTaskElement(
                 task.text,
                 task.priority,
-                task.dueDate // This is now an ISO string
+                task.dueDate
             );
             column.appendChild(taskElement);
         });
     });
+
+    console.log("Tasks loaded successfully!"); // Debugging Log
 }
+
 // Calendar Functions (unchanged)
 function openCalendar() {
     document.querySelector('.calendar-modal').style.display = 'block';
@@ -532,3 +539,6 @@ document.addEventListener('DOMContentLoaded', () => {
         globalTimer.style.cursor = 'grab';
     });
 });
+window.onload = function () {
+    loadTasks();
+};
