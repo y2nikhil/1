@@ -105,29 +105,39 @@ async function shareSnapshot() {
     });
 }
 // Task Management (unchanged)
+// Remove the duplicate createTaskElement function and modify the remaining one:
 function createTaskElement(text, priorityColor, dueDate) {
     const task = document.createElement('div');
     task.className = 'task';
     task.id = `task-${Date.now()}`;
     task.draggable = true;
+    
+    // Store original values in data attributes
+    const dueDateISO = dueDate ? new Date(dueDate).toISOString() : null;
     task.innerHTML = `
-        <div class="priority-dot" style="background: ${priorityColor}"></div>
+        <div class="priority-dot" 
+             style="background: ${priorityColor}" 
+             data-priority="${priorityColor}"></div>
         <div class="task-content">
             <p>${text}</p>
-            ${dueDate ? `<small>Due: ${new Date(dueDate).toLocaleString()}</small>` : ''}
+            ${dueDate ? `<small data-due="${dueDateISO}">Due: ${new Date(dueDate).toLocaleString()}</small>` : ''}
             <div class="task-timer">00:00</div>
             <div class="task-controls">
-                <button onclick="startTimer(this)">▶️</button>
-                <button onclick="pauseTimer(this)">⏸️</button>
-                <button onclick="resetTimer(this)">🔄</button>
+                <button onclick="startTimer(this)">▶ Play</button>
+                <button onclick="pauseTimer(this)">⏸ Pause</button>
+                <button onclick="resetTimer(this)">↻ Reset</button>
             </div>
         </div>
         <div class="task-actions">
-            <button class="action-btn" onclick="editTask(this)">✏️</button>
-            <button class="action-btn" onclick="deleteTask(this)">✖️</button>
+            <button class="action-btn" onclick="editTask(this)">✎ Edit</button>
+            <button class="action-btn" onclick="deleteTask(this)">✖ Delete</button>
         </div>
-        <button class="move-btn" onclick="moveTask(this)">➡️</button>
+        <button class="move-btn" onclick="moveTask(this)">→ Move</button>
     `;
+
+    if (!document.body.classList.contains('dark-mode')) {
+        task.style.backgroundColor = getRandomColor();
+    }
     return task;
 }
 function addTask() {
@@ -295,22 +305,21 @@ function loadMetrics() {
 function saveTasks() {
     const tasks = {
         todo: Array.from(document.getElementById('todo').children).map(task => ({
-            text: task.querySelector('p').textContent,
-            priority: task.querySelector('.priority-dot').style.backgroundColor,
-            dueDate: task.querySelector('small') ? task.querySelector('small').textContent.replace('Due: ', '') : null
+            text: task.querySelector('.task-content p').textContent,
+            priority: task.querySelector('.priority-dot').dataset.priority,
+            dueDate: task.querySelector('small') ? task.querySelector('small').dataset.due : null
         })),
         'in-progress': Array.from(document.getElementById('in-progress').children).map(task => ({
-            text: task.querySelector('p').textContent,
-            priority: task.querySelector('.priority-dot').style.backgroundColor,
-            dueDate: task.querySelector('small') ? task.querySelector('small').textContent.replace('Due: ', '') : null
+            text: task.querySelector('.task-content p').textContent,
+            priority: task.querySelector('.priority-dot').dataset.priority,
+            dueDate: task.querySelector('small') ? task.querySelector('small').dataset.due : null
         })),
         done: Array.from(document.getElementById('done').children).map(task => ({
-            text: task.querySelector('p').textContent,
-            priority: task.querySelector('.priority-dot').style.backgroundColor,
-            dueDate: task.querySelector('small') ? task.querySelector('small').textContent.replace('Due: ', '') : null
+            text: task.querySelector('.task-content p').textContent,
+            priority: task.querySelector('.priority-dot').dataset.priority,
+            dueDate: task.querySelector('small') ? task.querySelector('small').dataset.due : null
         }))
     };
-
     localStorage.setItem('tasks', JSON.stringify(tasks));
 }
 
@@ -322,14 +331,17 @@ function loadTasks() {
 
     ['todo', 'in-progress', 'done'].forEach(status => {
         const column = document.getElementById(status);
-        column.innerHTML = ''; // Purane tasks hatao
+        column.innerHTML = '';
         taskData[status].forEach(task => {
-            const taskElement = createTaskElement(task.text, task.priority, task.dueDate);
+            const taskElement = createTaskElement(
+                task.text,
+                task.priority,
+                task.dueDate // This is now an ISO string
+            );
             column.appendChild(taskElement);
         });
     });
 }
-
 // Calendar Functions (unchanged)
 function openCalendar() {
     document.querySelector('.calendar-modal').style.display = 'block';
@@ -520,6 +532,3 @@ document.addEventListener('DOMContentLoaded', () => {
         globalTimer.style.cursor = 'grab';
     });
 });
-window.onload = function () {
-    loadTasks();
-};
