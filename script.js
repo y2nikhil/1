@@ -313,6 +313,7 @@ function saveTasks() {
     localStorage.setItem('tasks', JSON.stringify(tasks));
 }
 
+
 function loadTasks() {
     const saved = localStorage.getItem('tasks');
     if (!saved) return;
@@ -519,3 +520,6 @@ document.addEventListener('DOMContentLoaded', () => {
         globalTimer.style.cursor = 'grab';
     });
 });
+window.onload = function () {
+    loadTasks();
+};
