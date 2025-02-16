@@ -103,6 +103,7 @@
     <button onclick="resetCountdownTimer()">🔄</button>
 </div>
 <!-- Floating Action Button -->
+<!-- Add this to your HTML -->
 <div class="fab-container">
     <button class="fab" onclick="toggleFabMenu()">
         <i class="fas fa-plus"></i>
@@ -110,6 +111,9 @@
     <div class="fab-menu">
         <button class="fab-option" onclick="openTimerOptions()">
             <i class="fas fa-stopwatch"></i> Start Timer
+        </button>
+        <button class="fab-option" onclick="clearAllData()">
+            <i class="fas fa-trash"></i> Clear All Data
         </button>
     </div>
 </div>
