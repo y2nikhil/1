@@ -297,39 +297,54 @@ function saveTasks() {
             text: task.querySelector('p').textContent,
             priority: task.querySelector('.priority-dot').style.backgroundColor,
             timer: task.querySelector('.task-timer').textContent,
-            dueDate: task.querySelector('small')?.textContent.replace('Due: ', '')
+            dueDate: task.querySelector('small') ? task.querySelector('small').textContent.replace('Due: ', '') : null
         })),
         'in-progress': Array.from(document.getElementById('in-progress').children).map(task => ({
             text: task.querySelector('p').textContent,
             priority: task.querySelector('.priority-dot').style.backgroundColor,
             timer: task.querySelector('.task-timer').textContent,
-            dueDate: task.querySelector('small')?.textContent.replace('Due: ', '')
+            dueDate: task.querySelector('small') ? task.querySelector('small').textContent.replace('Due: ', '') : null
         })),
         done: Array.from(document.getElementById('done').children).map(task => ({
             text: task.querySelector('p').textContent,
             priority: task.querySelector('.priority-dot').style.backgroundColor,
             timer: task.querySelector('.task-timer').textContent,
-            dueDate: task.querySelector('small')?.textContent.replace('Due: ', '')
+            dueDate: task.querySelector('small') ? task.querySelector('small').textContent.replace('Due: ', '') : null
         }))
     };
     localStorage.setItem('tasks', JSON.stringify(tasks));
 }
+
+
 function loadTasks() {
-    const saved = JSON.parse(localStorage.getItem('tasks')) || {};
-    
-    for (const [column, tasks] of Object.entries(saved)) {
-        const container = document.getElementById(column);
-        tasks.forEach(taskData => {
-            const task = createTaskElement(
-                taskData.text,
-                taskData.priority,
-                taskData.dueDate ? new Date(taskData.dueDate) : null
+    const saved = localStorage.getItem('tasks');
+    if (!saved) return;
+
+    const taskData = JSON.parse(saved);
+
+    ['todo', 'in-progress', 'done'].forEach(status => {
+        const column = document.getElementById(status);
+        column.innerHTML = ''; // Clear existing tasks
+        taskData[status].forEach(task => {
+            const taskElement = createTaskElement(
+                task.text,
+                task.priority,
+                task.dueDate ? new Date(task.dueDate) : null
             );
-            task.querySelector('.task-timer').textContent = taskData.timer;
-            container.appendChild(task);
+            taskElement.querySelector('.task-timer').textContent = task.timer; // Restore timer state
+            column.appendChild(taskElement);
         });
-    }
+    });
 }
+
+
+window.onload = function () {
+    loadTasks(); // Load saved tasks
+    if (localStorage.getItem('darkMode') === 'true') toggleDarkMode(); // Restore dark mode
+    loadMetrics(); // Load saved metrics
+};
+
+
 // Calendar Functions (unchanged)
 function openCalendar() {
     document.querySelector('.calendar-modal').style.display = 'block';
@@ -520,6 +535,3 @@ document.addEventListener('DOMContentLoaded', () => {
         globalTimer.style.cursor = 'grab';
     });
 });
-window.onload = function () {
-    loadTasks();
-};
