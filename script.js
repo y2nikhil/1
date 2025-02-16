@@ -438,17 +438,23 @@ function closeTimerOptionsModal() {
 // Countdown Timer
 let countdownInterval;
 let countdownTime = 0;
+let isNotificationShown = false; // Flag to track if notification has been shown
+
 function startCountdownTimer(minutes) {
     countdownTime = minutes * 60;
+    isNotificationShown = false; // Reset the flag when starting a new timer
     closeTimerOptionsModal();
     const globalTimer = document.getElementById('global-timer');
     globalTimer.classList.add('active');
     countdownInterval = setInterval(() => {
         if (countdownTime <= 0) {
             clearInterval(countdownInterval);
-            showNotification('Timer Complete', 'Your timer has ended!');
-            playNotificationSound();
-            alert('Timer Complete!'); // Forced alert
+            if (!isNotificationShown) { // Ensure notification is shown only once
+                showNotification('Timer Complete', 'Your timer has ended!');
+                playNotificationSound();
+                alert('Timer Complete!'); // Forced alert
+                isNotificationShown = true; // Set the flag to true
+            }
             globalTimer.classList.remove('active');
             return;
         }
@@ -481,7 +487,7 @@ function showNotification(title, message) {
 }
 // Play Notification Sound
 function playNotificationSound() {
-    const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2993/2993-preview.mp3'); // Add a sound file URL
+    const audio = new Audio(); // Add a sound file URL
     audio.play();
 }
 // FAB Menu Toggle
