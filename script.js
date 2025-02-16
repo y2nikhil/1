@@ -210,64 +210,40 @@ function deleteTask(button) {
 }
 // Timer Functionality (unchanged)
 function startTimer(button) {
-    const task = button.closest('.task');
-    const taskId = task.id;
-    const timerDisplay = task.querySelector('.task-timer');
-
-    if (!taskId) {
-        console.error("Task ID not found!");
-        return;
-    }
-
+    const timerDisplay = button.parentElement.previousElementSibling;
+    const taskId = button.closest('.task').id;
+    
+    if (timers[taskId]) clearInterval(timers[taskId]);
+    
     let [minutes, seconds] = timerDisplay.textContent.split(':').map(Number);
-
-    // 🛑 Stop any existing timer for this task (Only this task, not others!)
-    if (timers[taskId]) {
-        clearInterval(timers[taskId]);
-    }
-
-    // ✅ Start a new timer for this task
+    
     timers[taskId] = setInterval(() => {
         seconds++;
         if (seconds === 60) {
             seconds = 0;
             minutes++;
         }
-
         timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-
-        saveTasks(); // 🔥 Auto-save timer progress
+        
+        saveTasks(); // 🔥 Auto-save every second
     }, 1000);
 }
 
-
 function pauseTimer(button) {
-    const task = button.closest('.task');
-    const taskId = task.id;
-
-    if (timers[taskId]) {
-        clearInterval(timers[taskId]); // 🛑 Stop only this task's timer
-        delete timers[taskId]; // Remove from active timers list
-    }
-
+    const taskId = button.closest('.task').id;
+    clearInterval(timers[taskId]);
     saveTasks(); // 🔥 Save the current time
 }
 
 function resetTimer(button) {
-    const task = button.closest('.task');
-    const taskId = task.id;
-    const timerDisplay = task.querySelector('.task-timer');
-
-    // 🛑 Stop this specific task's timer
-    if (timers[taskId]) {
-        clearInterval(timers[taskId]);
-        delete timers[taskId];
-    }
-
-    timerDisplay.textContent = "00:00"; // Reset to zero
+    const timerDisplay = button.parentElement.previousElementSibling;
+    const taskId = button.closest('.task').id;
+    
+    timerDisplay.textContent = '00:00';
+    clearInterval(timers[taskId]);
+    
     saveTasks(); // 🔥 Save the reset time
 }
-
 
 // Metrics Tracking
 function trackMetrics(action, task) {
@@ -382,6 +358,8 @@ function loadTasks() {
         return;
     }
 
+    console.log("Retrieved from localStorage:", saved);
+
     const taskData = JSON.parse(saved);
 
     ['todo', 'in-progress', 'done'].forEach(status => {
@@ -395,16 +373,6 @@ function loadTasks() {
                 task.priority,
                 task.dueDate
             );
-
-            // 🔥 Restore saved timer value
-            taskElement.querySelector('.task-timer').textContent = task.timer;
-            column.appendChild(taskElement);
-        });
-    });
-
-    console.log("Tasks loaded successfully with timers!");
-}
-
 
             // 🔥 Restore the saved timer value
             taskElement.querySelector('.task-timer').textContent = task.timer;
