@@ -1,4 +1,3 @@
-
 // Chart Configuration
 const ctx = document.getElementById('analyticsChart').getContext('2d');
 const analyticsChart = new Chart(ctx, {
@@ -140,7 +139,6 @@ function addTask() {
     saveTasks();
     trackMetrics('add');
 }
-
 function addScheduledTask() {
     const taskText = document.getElementById('task-for-date').value.trim();
     const dueDateTime = document.getElementById('task-datetime').value;
@@ -151,25 +149,17 @@ function addScheduledTask() {
     saveTasks();
     trackMetrics('add');
 }
-
 function moveTask(button) {
     const task = button.closest('.task');
     const currentColumn = task.parentElement.id;
     const columns = ['todo', 'in-progress', 'done'];
     const nextColumn = columns[(columns.indexOf(currentColumn) + 1) % columns.length];
     document.getElementById(nextColumn).appendChild(task);
-    saveTasks();
     if (nextColumn === 'done') {
         trackMetrics('complete', task);
         celebrateTask(task);
     }
-}
-
-function deleteTask(button) {
-    const task = button.closest('.task');
-    task.remove();
     saveTasks();
-    trackMetrics('delete');
 }
 function celebrateTask(task) {
     const emojis = ['🎆', '🎊', '🎉'];
@@ -194,6 +184,12 @@ function editTask(button) {
         task.querySelector('p').textContent = newText;
         saveTasks();
     }
+}
+function deleteTask(button) {
+    const task = button.closest('.task');
+    task.remove();
+    saveTasks();
+    trackMetrics('delete');
 }
 // Timer Functionality (unchanged)
 let timers = {};
@@ -295,28 +291,25 @@ function loadMetrics() {
     updateMetrics();
 }
 // Save/Load Tasks (unchanged)
-// Save/Load Tasks
 function saveTasks() {
     const tasks = {
         todo: Array.from(document.getElementById('todo').children).map(task => ({
             text: task.querySelector('p').textContent,
             priority: task.querySelector('.priority-dot').style.backgroundColor,
-            dueDate: task.querySelector('small') ? task.querySelector('small').textContent.replace('Due: ', '') : null,
-            timer: task.querySelector('.task-timer').textContent  // Save timer state
+            dueDate: task.querySelector('small') ? task.querySelector('small').textContent.replace('Due: ', '') : null
         })),
         'in-progress': Array.from(document.getElementById('in-progress').children).map(task => ({
             text: task.querySelector('p').textContent,
             priority: task.querySelector('.priority-dot').style.backgroundColor,
-            dueDate: task.querySelector('small') ? task.querySelector('small').textContent.replace('Due: ', '') : null,
-            timer: task.querySelector('.task-timer').textContent  // Save timer state
+            dueDate: task.querySelector('small') ? task.querySelector('small').textContent.replace('Due: ', '') : null
         })),
         done: Array.from(document.getElementById('done').children).map(task => ({
             text: task.querySelector('p').textContent,
             priority: task.querySelector('.priority-dot').style.backgroundColor,
-            dueDate: task.querySelector('small') ? task.querySelector('small').textContent.replace('Due: ', '') : null,
-            timer: task.querySelector('.task-timer').textContent  // Save timer state
+            dueDate: task.querySelector('small') ? task.querySelector('small').textContent.replace('Due: ', '') : null
         }))
     };
+
     localStorage.setItem('tasks', JSON.stringify(tasks));
 }
 
@@ -325,24 +318,17 @@ function loadTasks() {
     if (!saved) return;
 
     const taskData = JSON.parse(saved);
+
     ['todo', 'in-progress', 'done'].forEach(status => {
         const column = document.getElementById(status);
-        column.innerHTML = '';
+        column.innerHTML = ''; // Purane tasks hatao
         taskData[status].forEach(task => {
             const taskElement = createTaskElement(task.text, task.priority, task.dueDate);
-            taskElement.querySelector('.task-timer').textContent = task.timer;
             column.appendChild(taskElement);
         });
     });
 }
 
-
-
-// Initialize the tasks when the page loads
-window.onload = function () {
-    loadTasks();
-    if (localStorage.getItem('darkMode') === 'true') toggleDarkMode();
-    loadMetrics();
 // Calendar Functions (unchanged)
 function openCalendar() {
     document.querySelector('.calendar-modal').style.display = 'block';
@@ -532,7 +518,3 @@ document.addEventListener('DOMContentLoaded', () => {
         isDragging = false;
         globalTimer.style.cursor = 'grab';
     });
-});
-window.onload = function () {
-    loadTasks();
-};
