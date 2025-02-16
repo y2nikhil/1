@@ -297,40 +297,39 @@ function saveTasks() {
         todo: Array.from(document.getElementById('todo').children).map(task => ({
             text: task.querySelector('p').textContent,
             priority: task.querySelector('.priority-dot').style.backgroundColor,
-            timer: task.querySelector('.task-timer').textContent,
-            dueDate: task.querySelector('small')?.textContent.replace('Due: ', '')
+            dueDate: task.querySelector('small') ? task.querySelector('small').textContent.replace('Due: ', '') : null
         })),
         'in-progress': Array.from(document.getElementById('in-progress').children).map(task => ({
             text: task.querySelector('p').textContent,
             priority: task.querySelector('.priority-dot').style.backgroundColor,
-            timer: task.querySelector('.task-timer').textContent,
-            dueDate: task.querySelector('small')?.textContent.replace('Due: ', '')
+            dueDate: task.querySelector('small') ? task.querySelector('small').textContent.replace('Due: ', '') : null
         })),
         done: Array.from(document.getElementById('done').children).map(task => ({
             text: task.querySelector('p').textContent,
             priority: task.querySelector('.priority-dot').style.backgroundColor,
-            timer: task.querySelector('.task-timer').textContent,
-            dueDate: task.querySelector('small')?.textContent.replace('Due: ', '')
+            dueDate: task.querySelector('small') ? task.querySelector('small').textContent.replace('Due: ', '') : null
         }))
     };
+
     localStorage.setItem('tasks', JSON.stringify(tasks));
 }
+
 function loadTasks() {
-    const saved = JSON.parse(localStorage.getItem('tasks')) || {};
-    
-    for (const [column, tasks] of Object.entries(saved)) {
-        const container = document.getElementById(column);
-        tasks.forEach(taskData => {
-            const task = createTaskElement(
-                taskData.text,
-                taskData.priority,
-                taskData.dueDate ? new Date(taskData.dueDate) : null
-            );
-            task.querySelector('.task-timer').textContent = taskData.timer;
-            container.appendChild(task);
+    const saved = localStorage.getItem('tasks');
+    if (!saved) return;
+
+    const taskData = JSON.parse(saved);
+
+    ['todo', 'in-progress', 'done'].forEach(status => {
+        const column = document.getElementById(status);
+        column.innerHTML = ''; // Purane tasks hatao
+        taskData[status].forEach(task => {
+            const taskElement = createTaskElement(task.text, task.priority, task.dueDate);
+            column.appendChild(taskElement);
         });
-    }
+    });
 }
+
 // Calendar Functions (unchanged)
 function openCalendar() {
     document.querySelector('.calendar-modal').style.display = 'block';
