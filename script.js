@@ -296,39 +296,40 @@ function saveTasks() {
         todo: Array.from(document.getElementById('todo').children).map(task => ({
             text: task.querySelector('p').textContent,
             priority: task.querySelector('.priority-dot').style.backgroundColor,
-            dueDate: task.querySelector('small') ? task.querySelector('small').textContent.replace('Due: ', '') : null
+            timer: task.querySelector('.task-timer').textContent,
+            dueDate: task.querySelector('small')?.textContent.replace('Due: ', '')
         })),
         'in-progress': Array.from(document.getElementById('in-progress').children).map(task => ({
             text: task.querySelector('p').textContent,
             priority: task.querySelector('.priority-dot').style.backgroundColor,
-            dueDate: task.querySelector('small') ? task.querySelector('small').textContent.replace('Due: ', '') : null
+            timer: task.querySelector('.task-timer').textContent,
+            dueDate: task.querySelector('small')?.textContent.replace('Due: ', '')
         })),
         done: Array.from(document.getElementById('done').children).map(task => ({
             text: task.querySelector('p').textContent,
             priority: task.querySelector('.priority-dot').style.backgroundColor,
-            dueDate: task.querySelector('small') ? task.querySelector('small').textContent.replace('Due: ', '') : null
+            timer: task.querySelector('.task-timer').textContent,
+            dueDate: task.querySelector('small')?.textContent.replace('Due: ', '')
         }))
     };
-
     localStorage.setItem('tasks', JSON.stringify(tasks));
 }
-
 function loadTasks() {
-    const saved = localStorage.getItem('tasks');
-    if (!saved) return;
-
-    const taskData = JSON.parse(saved);
-
-    ['todo', 'in-progress', 'done'].forEach(status => {
-        const column = document.getElementById(status);
-        column.innerHTML = ''; // Purane tasks hatao
-        taskData[status].forEach(task => {
-            const taskElement = createTaskElement(task.text, task.priority, task.dueDate);
-            column.appendChild(taskElement);
+    const saved = JSON.parse(localStorage.getItem('tasks')) || {};
+    
+    for (const [column, tasks] of Object.entries(saved)) {
+        const container = document.getElementById(column);
+        tasks.forEach(taskData => {
+            const task = createTaskElement(
+                taskData.text,
+                taskData.priority,
+                taskData.dueDate ? new Date(taskData.dueDate) : null
+            );
+            task.querySelector('.task-timer').textContent = taskData.timer;
+            container.appendChild(task);
         });
-    });
+    }
 }
-
 // Calendar Functions (unchanged)
 function openCalendar() {
     document.querySelector('.calendar-modal').style.display = 'block';
@@ -480,7 +481,7 @@ function showNotification(title, message) {
 }
 // Play Notification Sound
 function playNotificationSound() {
-    const audio = new Audio(); // Add a sound file URL
+    const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/2993/2993-preview.mp3'); // Add a sound file URL
     audio.play();
 }
 // FAB Menu Toggle
