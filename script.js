@@ -620,6 +620,6 @@ function clearAllData() {
     // Update the metrics display
     updateMetrics();
 
-    // Optionally, you can reload the page to ensure a fresh start
-    // window.location.reload();
+    // Force a page reload to ensure no old data is retained in memory
+    window.location.reload();
 }
