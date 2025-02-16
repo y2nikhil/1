@@ -595,3 +595,31 @@ window.onload = function () {
     console.log("Window loaded. Running loadTasks...");
     loadTasks();
 };
+// Add this function to your script.js
+function clearAllData() {
+    // Clear local storage
+    localStorage.clear();
+
+    // Reset metrics
+    metrics = {
+        completedTasks: 0,
+        timeSpent: 0,
+        taskStats: {}
+    };
+
+    // Reset the chart
+    analyticsChart.data.labels = [];
+    analyticsChart.data.datasets[0].data = [];
+    analyticsChart.update();
+
+    // Clear the task columns
+    document.getElementById('todo').innerHTML = '<h2>To Do</h2>';
+    document.getElementById('in-progress').innerHTML = '<h2>In Progress</h2>';
+    document.getElementById('done').innerHTML = '<h2>Completed</h2>';
+
+    // Update the metrics display
+    updateMetrics();
+
+    // Optionally, you can reload the page to ensure a fresh start
+    // window.location.reload();
+}
