@@ -1,3 +1,4 @@
+
 // Chart Configuration
 const ctx = document.getElementById('analyticsChart').getContext('2d');
 const analyticsChart = new Chart(ctx, {
@@ -296,25 +297,22 @@ function saveTasks() {
         todo: Array.from(document.getElementById('todo').children).map(task => ({
             text: task.querySelector('p').textContent,
             priority: task.querySelector('.priority-dot').style.backgroundColor,
-            timer: task.querySelector('.task-timer').textContent,
             dueDate: task.querySelector('small') ? task.querySelector('small').textContent.replace('Due: ', '') : null
         })),
         'in-progress': Array.from(document.getElementById('in-progress').children).map(task => ({
             text: task.querySelector('p').textContent,
             priority: task.querySelector('.priority-dot').style.backgroundColor,
-            timer: task.querySelector('.task-timer').textContent,
             dueDate: task.querySelector('small') ? task.querySelector('small').textContent.replace('Due: ', '') : null
         })),
         done: Array.from(document.getElementById('done').children).map(task => ({
             text: task.querySelector('p').textContent,
             priority: task.querySelector('.priority-dot').style.backgroundColor,
-            timer: task.querySelector('.task-timer').textContent,
             dueDate: task.querySelector('small') ? task.querySelector('small').textContent.replace('Due: ', '') : null
         }))
     };
+
     localStorage.setItem('tasks', JSON.stringify(tasks));
 }
-
 
 function loadTasks() {
     const saved = localStorage.getItem('tasks');
@@ -324,26 +322,13 @@ function loadTasks() {
 
     ['todo', 'in-progress', 'done'].forEach(status => {
         const column = document.getElementById(status);
-        column.innerHTML = ''; // Clear existing tasks
+        column.innerHTML = ''; // Purane tasks hatao
         taskData[status].forEach(task => {
-            const taskElement = createTaskElement(
-                task.text,
-                task.priority,
-                task.dueDate ? new Date(task.dueDate) : null
-            );
-            taskElement.querySelector('.task-timer').textContent = task.timer; // Restore timer state
+            const taskElement = createTaskElement(task.text, task.priority, task.dueDate);
             column.appendChild(taskElement);
         });
     });
 }
-
-
-window.onload = function () {
-    loadTasks(); // Load saved tasks
-    if (localStorage.getItem('darkMode') === 'true') toggleDarkMode(); // Restore dark mode
-    loadMetrics(); // Load saved metrics
-};
-
 
 // Calendar Functions (unchanged)
 function openCalendar() {
@@ -535,3 +520,6 @@ document.addEventListener('DOMContentLoaded', () => {
         globalTimer.style.cursor = 'grab';
     });
 });
+window.onload = function () {
+    loadTasks();
+};
