@@ -654,3 +654,9 @@ async function clearAllData() {
         alert('Failed to clear all data. Please try again.');
     }
 }
+// Add Enter key support for task input
+document.getElementById('task-input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+        addTask(); // Trigger the existing addTask function
+    }
+});
