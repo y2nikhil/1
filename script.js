@@ -1,4 +1,3 @@
-
 // Chart Configuration
 const ctx = document.getElementById('analyticsChart').getContext('2d');
 const analyticsChart = new Chart(ctx, {
