@@ -140,16 +140,6 @@ function createTaskElement(text, priorityColor, dueDate) {
     }
     return task;
 }
-
-// Add task when the "Add Task" button is clicked
-document.getElementById('addTaskButton').addEventListener('click', addTask);
-
-// Add task when the "Enter" key is pressed in the input field
-document.getElementById('task-input').addEventListener('keydown', function(event) {
-    if (event.key === 'Enter') {
-        addTask(); // Call the addTask function
-    }
-});
 function addTask() {
     console.log("Adding new task...");
     
