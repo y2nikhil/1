@@ -596,3 +596,9 @@ body.dark-mode .task-timer {
 .fab-option.clear-btn:hover {
     background-color: #ff6b81; /* Lighter red on hover */
 }
+/* Ensure headings are visible in dark mode */
+body.dark-mode .column h2 {
+    color: #FFFFFF !important;  /* Pure white for better contrast */
+    font-weight: bold !important;
+    text-shadow: 1px 1px 5px rgba(255, 255, 255, 0.3); /* Soft glow effect */
+}
