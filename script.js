@@ -639,11 +639,6 @@ async function clearAllData() {
         analyticsChart.data.datasets[0].data = [];
         analyticsChart.update();
 
-        // Clear the task columns
-        document.getElementById('todo').innerHTML = '<h2>To Do</h2>';
-        document.getElementById('in-progress').innerHTML = '<h2>In Progress</h2>';
-        document.getElementById('done').innerHTML = '<h2>Completed</h2>';
-
         // Update the metrics display
         updateMetrics();
 
