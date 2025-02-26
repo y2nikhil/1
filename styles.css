@@ -44,21 +44,6 @@ h1 {
     backdrop-filter: blur(10px);
     scroll-snap-align: start;
 }
-.column h2 {
-    color: var(--primary);
-    margin-bottom: 20px;
-    font-weight: 600;
-    position: relative;
-}
-.column h2::after {
-    content: '';
-    position: absolute;
-    bottom: -10px;
-    left: 0;
-    width: 40px;
-    height: 3px;
-    background: var(--secondary);
-}
 .task {
     background: var(--task-bg);
     padding: 20px;
