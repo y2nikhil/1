@@ -596,3 +596,10 @@ body.dark-mode .task-timer {
 .fab-option.clear-btn:hover {
     background-color: #ff6b81; /* Lighter red on hover */
 }
+.column h2 {
+    display: block !important; /* Forces the heading to always be visible */
+    color: var(--primary);
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 10px;
+}
