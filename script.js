@@ -594,8 +594,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 window.onload = function () {
-    console.log("Window loaded. Running loadTasks...");
-    loadTasks();
+    loadTasks(); // ✅ Load tasks from localStorage
+
+    // ✅ Reattach event listeners to timers after reload
+    setTimeout(() => {
+        document.querySelectorAll(".task").forEach(task => {
+            attachTimerEvents(task);
+        });
+    }, 500);
 };
 // Add this function to your script.js
 async function clearAllData() {
@@ -658,3 +664,22 @@ document.getElementById('task-input').addEventListener('keydown', function(e) {
         addTask(); // Trigger the existing addTask function
     }
 });
+function attachTimerEvents(task) {
+    const timer = task.querySelector(".task-timer");
+    const startButton = task.querySelector(".start-timer");
+    const stopButton = task.querySelector(".stop-timer");
+
+    if (timer && startButton) {
+        startButton.addEventListener("click", () => {
+            if (!timer.dataset.running) {
+                startTimer(timer);
+            }
+        });
+    }
+
+    if (timer && stopButton) {
+        stopButton.addEventListener("click", () => {
+            stopTimer(timer);
+        });
+    }
+}
