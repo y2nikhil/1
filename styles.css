@@ -603,3 +603,6 @@ body.dark-mode .task-timer {
     text-align: center;
     margin-bottom: 10px;
 }
+.column {
+    min-height: 100px; /* Ensures space for the heading */
+}
