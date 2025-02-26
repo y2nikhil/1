@@ -381,7 +381,8 @@ function loadTasks() {
     ['todo', 'in-progress', 'done'].forEach(status => {
         const column = document.getElementById(status);
         if (!column) return;
-        column.innerHTML = ''; // Clear column before loading saved tasks
+        column.innerHTML = `<h2>${column.getAttribute("data-heading")}</h2>`; // ✅ This keeps headings
+
 
         taskData[status].forEach(task => {
             const taskElement = createTaskElement(
