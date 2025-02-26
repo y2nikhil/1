@@ -596,39 +596,11 @@ body.dark-mode .task-timer {
 .fab-option.clear-btn:hover {
     background-color: #ff6b81; /* Lighter red on hover */
 }
-/* Force headings to always stay visible */
-.column h2 {
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    position: relative !important;
-    z-index: 1000 !important;
-    color: var(--primary) !important;
-}
-
-/* If headings get removed, force them back */
-#todo h2::before, 
-#in-progress h2::before, 
-#done h2::before {
-    content: attr(data-heading) !important;
-    display: block !important;
-    font-size: 1.5em !important;
-    font-weight: bold !important;
-    color: var(--primary) !important;
-    text-align: center !important;
-    position: absolute !important;
-    top: 10px !important;
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-}
-
-/* Ensure column has space for heading */
-.column {
-    min-height: 100px !important;
-    position: relative !important;
-}
-
-/* Extra Debug: Add Red Border to Check */
-#todo, #in-progress, #done {
-    border: 2px solid red !important;
+/* Force headings to reappear after reload */
+.column:before {
+    content: attr(data-heading);
+    display: block;
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
 }
