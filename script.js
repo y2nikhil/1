@@ -381,21 +381,23 @@ function loadTasks() {
     ['todo', 'in-progress', 'done'].forEach(status => {
         const column = document.getElementById(status);
         if (!column) return;
+
         column.innerHTML = `<h2>${column.getAttribute("data-heading")}</h2>`; // ✅ This keeps headings
 
 
         taskData[status].forEach(task => {
-            const taskElement = createTaskElement(
-                task.text,
-                task.priority,
-                task.dueDate
-            );
+    if (!task.text || task.text.trim() === "") return; // ✅ Skip tasks without a name
 
-            // 🔥 Restore the saved timer value
-            taskElement.querySelector('.task-timer').textContent = task.timer;
+    const taskElement = createTaskElement(
+        task.text,
+        task.priority,
+        task.dueDate
+    );
 
-            column.appendChild(taskElement);
-        });
+    taskElement.querySelector('.task-timer').textContent = task.timer;
+    column.appendChild(taskElement);
+});
+
     });
 
     console.log("Tasks loaded successfully with timers!");
