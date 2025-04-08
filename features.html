@@ -1,1 +1,394 @@
-hi
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Planner | ProTask</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Additional styles specific to the planner page */
+        .planner-container {
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .task-pool {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .daily-plan {
+            flex: 2;
+            min-width: 400px;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            min-height: 500px;
+        }
+        
+        .planning-area {
+            margin-top: 20px;
+            padding: 15px;
+            border: 2px dashed var(--secondary);
+            border-radius: 12px;
+            min-height: 400px;
+        }
+        
+        .planner-task {
+            background: var(--task-bg);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            cursor: grab;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+        
+        .planner-task:hover {
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+            transform: scale(1.02);
+        }
+        
+        .planner-task .priority-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            position: absolute;
+            top: 15px;
+            left: 15px;
+        }
+        
+        .planner-task .task-content {
+            margin-left: 20px;
+        }
+        
+        .planner-task .task-timer {
+            font-size: 0.8em;
+            color: var(--secondary);
+            margin-top: 5px;
+        }
+        
+        .add-task-form {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .add-task-form input {
+            flex: 1;
+            min-width: 200px;
+            padding: 10px;
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+        }
+        
+        .add-task-form button {
+            padding: 10px 20px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        
+        .save-plan-btn {
+            display: block;
+            margin: 20px auto;
+            padding: 12px 25px;
+            background: var(--secondary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+        }
+        
+        .save-plan-btn:hover {
+            background: var(--primary);
+        }
+        
+        .task-pool h2, .daily-plan h2 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            position: relative;
+        }
+        
+        .task-pool h2::after, .daily-plan h2::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: var(--secondary);
+        }
+        
+        /* Dark mode adjustments */
+        body.dark-mode .task-pool,
+        body.dark-mode .daily-plan {
+            background: var(--task-bg);
+        }
+        
+        body.dark-mode .planner-task {
+            background: rgba(0, 0, 0, 0.2);
+        }
+        
+        body.dark-mode .add-task-form input {
+            background: var(--task-bg);
+            color: var(--text);
+            border-color: var(--accent);
+        }
+    </style>
+</head>
+<body>
+    <h1>Daily Planner</h1>
+    
+    <div class="menu-icon" onclick="toggleMenu()">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+    </div>
+    
+    <nav class="nav-menu">
+        <ul>
+            <li><a href="index.html" class="bubble">Back to Main</a></li>
+            <li><a href="about.html" class="bubble">About</a></li>
+            <li><a href="features.html" class="bubble">Features</a></li>
+            <li><a href="contact.html" class="bubble">Contact</a></li>
+            <li><a href="help.html" class="bubble">Help</a></li>
+        </ul>
+    </nav>
+    
+    <div class="planner-container">
+        <div class="task-pool">
+            <h2>Your Tasks</h2>
+            <div id="available-tasks">
+                <!-- Tasks will be loaded here from localStorage -->
+            </div>
+            
+            <div class="add-task-form">
+                <input type="text" id="new-task-input" placeholder="Enter new task...">
+                <select id="new-task-priority">
+                    <option value="#ff4757">High</option>
+                    <option value="#ffa502">Medium</option>
+                    <option value="#2ed573">Low</option>
+                </select>
+                <button onclick="addNewTask()">Add Task</button>
+            </div>
+        </div>
+        
+        <div class="daily-plan">
+            <h2>Your Daily Plan</h2>
+            <p>Drag tasks from the left to plan your day</p>
+            
+            <div class="planning-area" id="planning-area">
+                <!-- Planned tasks will be dropped here -->
+            </div>
+            
+            <button class="save-plan-btn" onclick="saveDailyPlan()">
+                <i class="fas fa-save"></i> Save Daily Plan
+            </button>
+        </div>
+    </div>
+    
+    <script>
+        // Load tasks from localStorage
+        function loadTasks() {
+            const saved = localStorage.getItem('tasks');
+            if (!saved) return;
+            
+            const taskData = JSON.parse(saved);
+            const availableTasksContainer = document.getElementById('available-tasks');
+            availableTasksContainer.innerHTML = '';
+            
+            // Combine tasks from all columns
+            const allTasks = [...taskData.todo, ...taskData['in-progress'], ...taskData.done];
+            
+            allTasks.forEach((task, index) => {
+                if (!task.text || task.text.trim() === "") return;
+                
+                const taskElement = document.createElement('div');
+                taskElement.className = 'planner-task';
+                taskElement.draggable = true;
+                taskElement.dataset.taskId = `task-${index}`;
+                taskElement.dataset.timer = task.timer || "00:00";
+                
+                // Apply random color in light mode
+                if (!document.body.classList.contains('dark-mode')) {
+                    taskElement.style.backgroundColor = getRandomColor();
+                }
+                
+                taskElement.innerHTML = `
+                    <div class="priority-dot" style="background: ${task.priority}"></div>
+                    <div class="task-content">
+                        <p>${task.text}</p>
+                        <div class="task-timer">${task.timer || "00:00"}</div>
+                    </div>
+                `;
+                
+                availableTasksContainer.appendChild(taskElement);
+            });
+            
+            // Load saved daily plan if exists
+            loadDailyPlan();
+            
+            // Set up drag and drop
+            setupDragAndDrop();
+        }
+        
+        // Add new task (syncs with main page)
+        function addNewTask() {
+            const taskText = document.getElementById('new-task-input').value.trim();
+            const priorityColor = document.getElementById('new-task-priority').value;
+            
+            if (!taskText) return alert('Please enter a task!');
+            
+            // Create task element
+            const taskElement = document.createElement('div');
+            taskElement.className = 'planner-task';
+            taskElement.draggable = true;
+            taskElement.dataset.taskId = `task-${Date.now()}`;
+            taskElement.dataset.timer = "00:00";
+            
+            if (!document.body.classList.contains('dark-mode')) {
+                taskElement.style.backgroundColor = getRandomColor();
+            }
+            
+            taskElement.innerHTML = `
+                <div class="priority-dot" style="background: ${priorityColor}"></div>
+                <div class="task-content">
+                    <p>${taskText}</p>
+                    <div class="task-timer">00:00</div>
+                </div>
+            `;
+            
+            document.getElementById('available-tasks').appendChild(taskElement);
+            document.getElementById('new-task-input').value = '';
+            
+            // Also add to main tasks in localStorage
+            const saved = localStorage.getItem('tasks');
+            const taskData = saved ? JSON.parse(saved) : { todo: [], 'in-progress': [], done: [] };
+            
+            taskData.todo.push({
+                text: taskText,
+                priority: priorityColor,
+                timer: "00:00"
+            });
+            
+            localStorage.setItem('tasks', JSON.stringify(taskData));
+        }
+        
+        // Set up drag and drop functionality
+        function setupDragAndDrop() {
+            const tasks = document.querySelectorAll('.planner-task');
+            const planningArea = document.getElementById('planning-area');
+            
+            tasks.forEach(task => {
+                task.addEventListener('dragstart', () => {
+                    task.classList.add('dragging');
+                });
+                
+                task.addEventListener('dragend', () => {
+                    task.classList.remove('dragging');
+                });
+            });
+            
+            planningArea.addEventListener('dragover', e => {
+                e.preventDefault();
+                const draggingTask = document.querySelector('.dragging');
+                if (draggingTask) {
+                    planningArea.appendChild(draggingTask);
+                }
+            });
+        }
+        
+        // Save daily plan to localStorage
+        function saveDailyPlan() {
+            const planningArea = document.getElementById('planning-area');
+            const plannedTasks = Array.from(planningArea.children).map(task => ({
+                id: task.dataset.taskId,
+                text: task.querySelector('p').textContent,
+                priority: task.querySelector('.priority-dot').style.backgroundColor,
+                timer: task.querySelector('.task-timer').textContent
+            }));
+            
+            localStorage.setItem('dailyPlan', JSON.stringify(plannedTasks));
+            alert('Daily plan saved!');
+        }
+        
+        // Load daily plan from localStorage
+        function loadDailyPlan() {
+            const savedPlan = localStorage.getItem('dailyPlan');
+            if (!savedPlan) return;
+            
+            const plannedTasks = JSON.parse(savedPlan);
+            const planningArea = document.getElementById('planning-area');
+            planningArea.innerHTML = '';
+            
+            plannedTasks.forEach(task => {
+                const taskElement = document.createElement('div');
+                taskElement.className = 'planner-task';
+                taskElement.draggable = true;
+                taskElement.dataset.taskId = task.id;
+                taskElement.dataset.timer = task.timer;
+                
+                if (!document.body.classList.contains('dark-mode')) {
+                    taskElement.style.backgroundColor = getRandomColor();
+                }
+                
+                taskElement.innerHTML = `
+                    <div class="priority-dot" style="background: ${task.priority}"></div>
+                    <div class="task-content">
+                        <p>${task.text}</p>
+                        <div class="task-timer">${task.timer}</div>
+                    </div>
+                `;
+                
+                planningArea.appendChild(taskElement);
+            });
+        }
+        
+        // Generate random color for tasks (same as main page)
+        function getRandomColor() {
+            const r = Math.floor(Math.random() * 156) + 100;
+            const g = Math.floor(Math.random() * 156) + 100;
+            const b = Math.floor(Math.random() * 156) + 100;
+            return `rgb(${r}, ${g}, ${b})`;
+        }
+        
+        // Toggle menu (same as main page)
+        function toggleMenu() {
+            const menuIcon = document.querySelector('.menu-icon');
+            const navMenu = document.querySelector('.nav-menu');
+            menuIcon.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        }
+        
+        // Close menu when clicking outside (same as main page)
+        document.addEventListener('click', (event) => {
+            const menuIcon = document.querySelector('.menu-icon');
+            const navMenu = document.querySelector('.nav-menu');
+            if (!menuIcon.contains(event.target) && !navMenu.contains(event.target)) {
+                menuIcon.classList.remove('active');
+                navMenu.classList.remove('active');
+            }
+        });
+        
+        // Load tasks when page loads
+        document.addEventListener('DOMContentLoaded', loadTasks);
+    </script>
+</body>
+</html>
