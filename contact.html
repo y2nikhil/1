@@ -3,14 +3,233 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Whiteboard App</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+            background-color: #f0f0f0;
+        }
+        
+        #whiteboard-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        
+        #toolbar {
+            background-color: #333;
+            padding: 10px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .tool-button {
+            background-color: #555;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+        
+        .tool-button:hover {
+            background-color: #777;
+        }
+        
+        .tool-button.active {
+            background-color: #007bff;
+        }
+        
+        #color-picker {
+            width: 30px;
+            height: 30px;
+            padding: 0;
+            border: 2px solid #fff;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        #brush-size {
+            width: 60px;
+        }
+        
+        #clear-btn {
+            background-color: #dc3545;
+            margin-left: auto;
+        }
+        
+        #clear-btn:hover {
+            background-color: #c82333;
+        }
+        
+        #whiteboard {
+            flex-grow: 1;
+            background-color: white;
+            cursor: crosshair;
+            touch-action: none;
+        }
+        
+        #status {
+            background-color: #333;
+            color: white;
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+    </style>
 </head>
 <body>
-    print("Hello World")
-    <h1>Contact Us</h1>
-    <p>Email: support@protask.com</p>
-    <p>Phone: +1 123 456 7890</p>
-    <a href="index.html">Back to Dashboard</a>
+    <div id="whiteboard-container">
+        <div id="toolbar">
+            <button class="tool-button active" data-tool="pen">✏️ Pen</button>
+            <button class="tool-button" data-tool="eraser">🧽 Eraser</button>
+            <input type="color" id="color-picker" value="#000000">
+            <input type="range" id="brush-size" min="1" max="50" value="5">
+            <span style="color: white;">Size: <span id="brush-size-value">5</span></span>
+            <button class="tool-button" id="clear-btn">🗑️ Clear</button>
+        </div>
+        <canvas id="whiteboard"></canvas>
+        <div id="status">Ready</div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const canvas = document.getElementById('whiteboard');
+            const ctx = canvas.getContext('2d');
+            const toolbar = document.getElementById('toolbar');
+            const colorPicker = document.getElementById('color-picker');
+            const brushSize = document.getElementById('brush-size');
+            const brushSizeValue = document.getElementById('brush-size-value');
+            const clearBtn = document.getElementById('clear-btn');
+            const status = document.getElementById('status');
+            
+            let isDrawing = false;
+            let currentTool = 'pen';
+            let currentColor = '#000000';
+            let currentSize = 5;
+            let lastX = 0;
+            let lastY = 0;
+            let hue = 0;
+            
+            // Set canvas to full size
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight - toolbar.offsetHeight - status.offsetHeight;
+                clearWhiteboard();
+            }
+            
+            window.addEventListener('resize', resizeCanvas);
+            resizeCanvas();
+            
+            // Tool selection
+            toolbar.addEventListener('click', (e) => {
+                if (e.target.dataset.tool) {
+                    document.querySelectorAll('.tool-button').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    e.target.classList.add('active');
+                    currentTool = e.target.dataset.tool;
+                    status.textContent = `Selected: ${currentTool}`;
+                }
+            });
+            
+            // Color picker
+            colorPicker.addEventListener('input', (e) => {
+                currentColor = e.target.value;
+            });
+            
+            // Brush size
+            brushSize.addEventListener('input', (e) => {
+                currentSize = e.target.value;
+                brushSizeValue.textContent = currentSize;
+            });
+            
+            // Clear button
+            clearBtn.addEventListener('click', clearWhiteboard);
+            
+            function clearWhiteboard() {
+                ctx.fillStyle = 'white';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                status.textContent = 'Canvas cleared';
+                setTimeout(() => status.textContent = 'Ready', 2000);
+            }
+            
+            // Drawing functions
+            function startDrawing(e) {
+                isDrawing = true;
+                [lastX, lastY] = getPosition(e);
+            }
+            
+            function draw(e) {
+                if (!isDrawing) return;
+                
+                const [x, y] = getPosition(e);
+                
+                ctx.beginPath();
+                ctx.moveTo(lastX, lastY);
+                ctx.lineTo(x, y);
+                
+                if (currentTool === 'pen') {
+                    ctx.strokeStyle = currentColor;
+                } else if (currentTool === 'eraser') {
+                    ctx.strokeStyle = 'white';
+                }
+                
+                ctx.lineWidth = currentSize;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+                ctx.stroke();
+                
+                [lastX, lastY] = [x, y];
+            }
+            
+            function stopDrawing() {
+                isDrawing = false;
+            }
+            
+            function getPosition(e) {
+                let x, y;
+                if (e.type.includes('touch')) {
+                    const rect = canvas.getBoundingClientRect();
+                    x = e.touches[0].clientX - rect.left;
+                    y = e.touches[0].clientY - rect.top;
+                } else {
+                    x = e.offsetX;
+                    y = e.offsetY;
+                }
+                return [x, y];
+            }
+            
+            // Event listeners
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseout', stopDrawing);
+            
+            // Touch support
+            canvas.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                startDrawing(e);
+            });
+            
+            canvas.addEventListener('touchmove', (e) => {
+                e.preventDefault();
+                draw(e);
+            });
+            
+            canvas.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                stopDrawing();
+            });
+            
+            // Initialize white background
+            clearWhiteboard();
+        });
+    </script>
 </body>
 </html>
