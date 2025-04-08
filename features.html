@@ -5,8 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daily Planner | ProTask</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
     <style>
+        :root {
+            --primary: #4a6fa5;
+            --secondary: #6b8cae;
+            --accent: #ff7e5f;
+            --text: #333;
+            --light: #f8f9fa;
+            --task-bg: #ffffff;
+            --border: #e0e0e0;
+            --success: #28a745;
+            --danger: #dc3545;
+            --warning: #ffc107;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f7fa;
+            color: var(--text);
+            transition: all 0.3s ease;
+        }
+        
         /* Planner-specific styles */
         .planner-header {
             display: flex;
@@ -55,7 +77,7 @@
         .time-slot {
             height: 60px;
             position: relative;
-            border-bottom: 1px solid rgba(0,0,0,0.1);
+            border-bottom: 1px solid var(--border);
             display: flex;
         }
         
@@ -82,6 +104,7 @@
             box-shadow: 0 2px 6px rgba(0,0,0,0.1);
             overflow: hidden;
             z-index: 10;
+            border-left: 4px solid var(--primary);
         }
         
         .planner-task .task-header {
@@ -107,6 +130,46 @@
             border-radius: 4px;
         }
         
+        .planner-task .task-notes {
+            font-size: 0.8em;
+            margin-top: 5px;
+            white-space: pre-wrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+        
+        .planner-task .task-actions {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            display: none;
+        }
+        
+        .planner-task:hover .task-actions {
+            display: flex;
+        }
+        
+        .planner-task .task-actions button {
+            background: rgba(255,255,255,0.8);
+            border: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-left: 3px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+        }
+        
+        .planner-task .task-actions button:hover {
+            background: white;
+        }
+        
         .planner-task .task-resize {
             position: absolute;
             bottom: 0;
@@ -127,6 +190,8 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: relative;
+            border-left: 4px solid var(--primary);
         }
         
         .task-pool-item .task-info {
@@ -141,6 +206,15 @@
         .task-pool-item .task-timer {
             font-size: 0.8em;
             color: var(--secondary);
+        }
+        
+        .task-pool-item .task-notes {
+            font-size: 0.8em;
+            color: var(--secondary);
+            margin-top: 3px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         
         .priority-indicator {
@@ -162,23 +236,112 @@
             cursor: pointer;
             text-align: center;
             transition: all 0.2s ease;
+            font-weight: 500;
         }
         
         .add-task-btn:hover {
             background: var(--secondary);
+            transform: translateY(-2px);
         }
         
-        /* Dark mode adjustments */
-        body.dark-mode .time-slot {
-            border-bottom-color: rgba(255,255,255,0.1);
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
         }
         
-        body.dark-mode .planner-task .task-timer {
-            background: rgba(0,0,0,0.3);
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
         
-        body.dark-mode .planner-task .task-resize {
-            background: rgba(255,255,255,0.1);
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .modal-title {
+            font-size: 1.3em;
+            color: var(--primary);
+            margin: 0;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: var(--secondary);
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-family: inherit;
+        }
+        
+        textarea.form-control {
+            min-height: 80px;
+            resize: vertical;
+        }
+        
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--secondary);
+        }
+        
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #c82333;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
         }
         
         /* Current time indicator */
@@ -200,6 +363,91 @@
             height: 8px;
             border-radius: 50%;
             background: var(--accent);
+        }
+        
+        /* Menu styles */
+        .menu-icon {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 30px;
+            height: 25px;
+            cursor: pointer;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .menu-icon .bar {
+            width: 100%;
+            height: 3px;
+            background-color: var(--primary);
+            transition: all 0.3s ease;
+        }
+        
+        .menu-icon.active .bar:nth-child(1) {
+            transform: translateY(11px) rotate(45deg);
+        }
+        
+        .menu-icon.active .bar:nth-child(2) {
+            opacity: 0;
+        }
+        
+        .menu-icon.active .bar:nth-child(3) {
+            transform: translateY(-11px) rotate(-45deg);
+        }
+        
+        .nav-menu {
+            position: fixed;
+            top: 0;
+            left: -250px;
+            width: 250px;
+            height: 100%;
+            background-color: white;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            z-index: 999;
+            padding-top: 70px;
+        }
+        
+        .nav-menu.active {
+            left: 0;
+        }
+        
+        .nav-menu ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .nav-menu li a {
+            display: block;
+            padding: 12px 20px;
+            color: var(--text);
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+        
+        .nav-menu li a:hover {
+            background-color: #f5f5f5;
+            color: var(--primary);
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .planner-container {
+                grid-template-columns: 1fr;
+                height: auto;
+            }
+            
+            .task-pool {
+                height: 300px;
+            }
+            
+            .time-grid {
+                height: calc(100vh - 450px);
+            }
         }
     </style>
 </head>
@@ -231,9 +479,9 @@
             <div id="task-pool-content">
                 <!-- Tasks will be loaded here -->
             </div>
-            <a href="index.html" class="add-task-btn">
+            <button class="add-task-btn" onclick="openTaskModal()">
                 <i class="fas fa-plus"></i> Add New Task
-            </a>
+            </button>
         </div>
         
         <div class="time-grid">
@@ -244,12 +492,51 @@
         </div>
     </div>
     
+    <!-- Task Modal -->
+    <div class="modal" id="taskModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Add New Task</h3>
+                <button class="close-modal" onclick="closeModal()">&times;</button>
+            </div>
+            <form id="taskForm">
+                <input type="hidden" id="taskId">
+                <div class="form-group">
+                    <label for="taskName">Task Name</label>
+                    <input type="text" class="form-control" id="taskName" required>
+                </div>
+                <div class="form-group">
+                    <label for="taskNotes">Notes</label>
+                    <textarea class="form-control" id="taskNotes"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="taskPriority">Priority</label>
+                    <select class="form-control" id="taskPriority">
+                        <option value="#4a6fa5">Normal</option>
+                        <option value="#ffc107">Medium</option>
+                        <option value="#dc3545">High</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="taskDuration">Duration (hours)</label>
+                    <input type="number" class="form-control" id="taskDuration" min="0.5" max="8" step="0.5" value="1">
+                </div>
+                <div class="btn-group">
+                    <button type="submit" class="btn btn-primary">Save Task</button>
+                    <button type="button" class="btn btn-danger" id="deleteBtn" style="display:none;" onclick="deleteTask()">Delete Task</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
     <script>
         // Global variables
         let draggedTask = null;
         let draggedTaskElement = null;
         let draggedTaskStartY = 0;
         let timeSlots = [];
+        let tasks = [];
+        let currentEditingTask = null;
         
         // Initialize the planner
         function initPlanner() {
@@ -259,8 +546,9 @@
             updateCurrentTimeIndicator();
             setInterval(updateCurrentTimeIndicator, 60000); // Update every minute
             
-            // Set up drag and drop
+            // Set up event listeners
             setupDragAndDrop();
+            setupTaskForm();
         }
         
         // Update current date display
@@ -302,39 +590,71 @@
         // Load tasks from localStorage
         function loadTasks() {
             const saved = localStorage.getItem('tasks');
-            if (!saved) return;
+            if (saved) {
+                tasks = JSON.parse(saved);
+            } else {
+                // Sample tasks for demo
+                tasks = [
+                    {
+                        id: 'task-1',
+                        name: 'Morning Meeting',
+                        notes: 'Discuss project milestones with team',
+                        priority: '#4a6fa5',
+                        duration: 1,
+                        timer: '00:00'
+                    },
+                    {
+                        id: 'task-2',
+                        name: 'Work on Presentation',
+                        notes: 'Prepare slides for investor meeting',
+                        priority: '#ffc107',
+                        duration: 2,
+                        timer: '00:00'
+                    },
+                    {
+                        id: 'task-3',
+                        name: 'Lunch Break',
+                        notes: '',
+                        priority: '#4a6fa5',
+                        duration: 0.5,
+                        timer: '00:00'
+                    }
+                ];
+                localStorage.setItem('tasks', JSON.stringify(tasks));
+            }
             
-            const taskData = JSON.parse(saved);
+            renderTaskPool();
+            loadDailyPlan();
+        }
+        
+        // Render task pool
+        function renderTaskPool() {
             const taskPool = document.getElementById('task-pool-content');
             taskPool.innerHTML = '';
             
-            // Combine tasks from all columns
-            const allTasks = [...taskData.todo, ...taskData['in-progress'], ...taskData.done];
-            
-            allTasks.forEach((task, index) => {
-                if (!task.text || task.text.trim() === "") return;
+            tasks.forEach(task => {
+                if (!task.name || task.name.trim() === "") return;
                 
                 const taskElement = document.createElement('div');
                 taskElement.className = 'task-pool-item';
-                taskElement.dataset.taskId = `task-${index}`;
-                taskElement.dataset.taskName = task.text;
-                taskElement.dataset.taskPriority = task.priority;
-                taskElement.dataset.taskTimer = task.timer || "00:00";
+                taskElement.dataset.taskId = task.id;
                 taskElement.draggable = true;
                 
                 taskElement.innerHTML = `
                     <div class="priority-indicator" style="background: ${task.priority}"></div>
                     <div class="task-info">
-                        <div class="task-name">${task.text}</div>
+                        <div class="task-name">${task.name}</div>
                         <div class="task-timer">${task.timer || "00:00"}</div>
+                        ${task.notes ? `<div class="task-notes">${task.notes}</div>` : ''}
+                    </div>
+                    <div class="task-actions">
+                        <button onclick="editTask('${task.id}', event)"><i class="fas fa-edit"></i></button>
+                        <button onclick="deleteTask('${task.id}', event)"><i class="fas fa-trash"></i></button>
                     </div>
                 `;
                 
                 taskPool.appendChild(taskElement);
             });
-            
-            // Load saved daily plan
-            loadDailyPlan();
         }
         
         // Load daily plan from localStorage
@@ -354,18 +674,27 @@
         
         // Place a task on the time grid
         function placeTaskOnGrid(task, timeSlot) {
+            const taskData = tasks.find(t => t.id === task.id);
+            if (!taskData) return;
+            
             const taskElement = document.createElement('div');
             taskElement.className = 'planner-task';
             taskElement.dataset.taskId = task.id;
             taskElement.style.top = `${task.startMinute}px`;
             taskElement.style.height = `${task.duration * 60 - 4}px`;
+            taskElement.style.borderLeftColor = taskData.priority;
             taskElement.style.background = task.background || getRandomColor();
             
             taskElement.innerHTML = `
                 <div class="task-header">
-                    <div class="task-name">${task.name}</div>
-                    <div class="task-timer">${task.timer}</div>
+                    <div class="task-name">${taskData.name}</div>
+                    <div class="task-timer">${taskData.timer}</div>
+                    <div class="task-actions">
+                        <button onclick="editTask('${task.id}', event)"><i class="fas fa-edit"></i></button>
+                        <button onclick="removeTaskFromGrid('${task.id}', event)"><i class="fas fa-trash"></i></button>
+                    </div>
                 </div>
+                ${taskData.notes ? `<div class="task-notes">${taskData.notes}</div>` : ''}
                 <div class="task-resize"></div>
             `;
             
@@ -380,12 +709,7 @@
             // Task pool items
             document.querySelectorAll('.task-pool-item').forEach(item => {
                 item.addEventListener('dragstart', function(e) {
-                    draggedTask = {
-                        id: this.dataset.taskId,
-                        name: this.dataset.taskName,
-                        priority: this.dataset.taskPriority,
-                        timer: this.dataset.taskTimer
-                    };
+                    draggedTask = tasks.find(task => task.id === this.dataset.taskId);
                     draggedTaskElement = this;
                     e.dataTransfer.setData('text/plain', this.dataset.taskId);
                     setTimeout(() => this.style.opacity = '0.4', 0);
@@ -421,12 +745,9 @@
                         
                         const newTask = {
                             id: draggedTask.id,
-                            name: draggedTask.name,
-                            priority: draggedTask.priority,
-                            timer: draggedTask.timer,
                             startHour: startHour,
                             startMinute: startMinute,
-                            duration: 1, // Default 1 hour duration
+                            duration: draggedTask.duration || 1,
                             background: getRandomColor()
                         };
                         
@@ -485,7 +806,7 @@
             
             function resizeTask(e) {
                 const dy = e.clientY - startY;
-                const newHeight = Math.max(60, startHeight + dy); // Minimum 1 hour
+                const newHeight = Math.max(30, startHeight + dy); // Minimum 30 minutes
                 
                 taskElement.style.height = `${newHeight}px`;
             }
@@ -493,6 +814,15 @@
             function stopResizeTask() {
                 document.removeEventListener('mousemove', resizeTask);
                 document.removeEventListener('mouseup', stopResizeTask);
+                
+                // Update task duration in tasks array
+                const taskId = taskElement.dataset.taskId;
+                const taskIndex = tasks.findIndex(t => t.id === taskId);
+                if (taskIndex !== -1) {
+                    tasks[taskIndex].duration = Math.round(parseInt(taskElement.style.height) / 60);
+                    localStorage.setItem('tasks', JSON.stringify(tasks));
+                }
+                
                 saveDailyPlan();
             }
         }
@@ -511,8 +841,6 @@
                     
                     plannedTasks.push({
                         id: task.dataset.taskId,
-                        name: task.querySelector('.task-name').textContent,
-                        timer: task.querySelector('.task-timer').textContent,
                         startHour,
                         startMinute,
                         duration,
@@ -542,6 +870,119 @@
             }
         }
         
+        // Task modal functions
+        function openTaskModal(taskId = null) {
+            const modal = document.getElementById('taskModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const deleteBtn = document.getElementById('deleteBtn');
+            
+            if (taskId) {
+                // Edit mode
+                modalTitle.textContent = 'Edit Task';
+                deleteBtn.style.display = 'block';
+                currentEditingTask = tasks.find(task => task.id === taskId);
+                
+                document.getElementById('taskId').value = currentEditingTask.id;
+                document.getElementById('taskName').value = currentEditingTask.name;
+                document.getElementById('taskNotes').value = currentEditingTask.notes || '';
+                document.getElementById('taskPriority').value = currentEditingTask.priority || '#4a6fa5';
+                document.getElementById('taskDuration').value = currentEditingTask.duration || 1;
+            } else {
+                // Add mode
+                modalTitle.textContent = 'Add New Task';
+                deleteBtn.style.display = 'none';
+                currentEditingTask = null;
+                
+                document.getElementById('taskForm').reset();
+                document.getElementById('taskId').value = 'task-' + Date.now();
+                document.getElementById('taskPriority').value = '#4a6fa5';
+                document.getElementById('taskDuration').value = 1;
+            }
+            
+            modal.style.display = 'flex';
+        }
+        
+        function closeModal() {
+            document.getElementById('taskModal').style.display = 'none';
+        }
+        
+        function setupTaskForm() {
+            const form = document.getElementById('taskForm');
+            
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const taskId = document.getElementById('taskId').value;
+                const taskName = document.getElementById('taskName').value;
+                const taskNotes = document.getElementById('taskNotes').value;
+                const taskPriority = document.getElementById('taskPriority').value;
+                const taskDuration = parseFloat(document.getElementById('taskDuration').value);
+                
+                if (currentEditingTask) {
+                    // Update existing task
+                    const taskIndex = tasks.findIndex(t => t.id === taskId);
+                    if (taskIndex !== -1) {
+                        tasks[taskIndex] = {
+                            ...tasks[taskIndex],
+                            name: taskName,
+                            notes: taskNotes,
+                            priority: taskPriority,
+                            duration: taskDuration
+                        };
+                    }
+                } else {
+                    // Add new task
+                    tasks.push({
+                        id: taskId,
+                        name: taskName,
+                        notes: taskNotes,
+                        priority: taskPriority,
+                        duration: taskDuration,
+                        timer: '00:00'
+                    });
+                }
+                
+                // Save and refresh
+                localStorage.setItem('tasks', JSON.stringify(tasks));
+                renderTaskPool();
+                closeModal();
+            });
+        }
+        
+        function editTask(taskId, e) {
+            e.stopPropagation();
+            openTaskModal(taskId);
+        }
+        
+        function deleteTask(taskId, e) {
+            if (e) e.stopPropagation();
+            
+            if (confirm('Are you sure you want to delete this task?')) {
+                // Remove from tasks array
+                tasks = tasks.filter(task => task.id !== taskId);
+                localStorage.setItem('tasks', JSON.stringify(tasks));
+                
+                // Remove from task pool
+                const taskElement = document.querySelector(`.task-pool-item[data-task-id="${taskId}"]`);
+                if (taskElement) taskElement.remove();
+                
+                // Remove from time grid
+                removeTaskFromGrid(taskId);
+                
+                if (currentEditingTask && currentEditingTask.id === taskId) {
+                    closeModal();
+                }
+            }
+        }
+        
+        function removeTaskFromGrid(taskId, e) {
+            if (e) e.stopPropagation();
+            
+            // Remove from grid
+            document.querySelectorAll(`.planner-task[data-task-id="${taskId}"]`).forEach(el => el.remove());
+            saveDailyPlan();
+        }
+        
         // Generate random color for tasks
         function getRandomColor() {
             const r = Math.floor(Math.random() * 156) + 100;
@@ -550,7 +991,7 @@
             return `rgb(${r}, ${g}, ${b})`;
         }
         
-        // Toggle menu (same as main page)
+        // Toggle menu
         function toggleMenu() {
             const menuIcon = document.querySelector('.menu-icon');
             const navMenu = document.querySelector('.nav-menu');
@@ -558,7 +999,7 @@
             navMenu.classList.toggle('active');
         }
         
-        // Close menu when clicking outside (same as main page)
+        // Close menu when clicking outside
         document.addEventListener('click', (event) => {
             const menuIcon = document.querySelector('.menu-icon');
             const navMenu = document.querySelector('.nav-menu');
