@@ -1,187 +1,109 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-   47    <meta charset="UTF-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ProTask | Daily Planner</title>
+    <title>Bubble Task Planner</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
     <style>
-        :root {
-            --primary: #2c5282;
-            --secondary: #63b3ed;
-            --accent: #ed8936;
-            --text: #2d3748;
-            --light: #edf2f7;
-            --task-bg: #ffffff;
-            --border: #e2e8f0;
-            --success: #48bb78;
-            --danger: #f56565;
-            --warning: #ecc94b;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--light);
-            color: var(--text);
+        .bubble-planner {
+            margin: 20px auto;
+            max-width: 1200px;
             padding: 20px;
-            line-height: 1.6;
-        }
-
-        .planner-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding: 10px 0;
-            border-bottom: 2px solid var(--primary);
+            background: #f7fafc;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
 
         .planner-title {
-            font-size: 2rem;
-            font-weight: 600;
-            color: var(--primary);
-        }
-
-        .planner-date {
-            font-size: 1.2rem;
-            color: var(--secondary);
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.8rem;
+            color: #2c5282;
+            text-align: center;
+            margin-bottom: 20px;
         }
 
         .planner-container {
-            display: grid;
-            grid-template-columns: 300px 1fr;
+            display: flex;
             gap: 20px;
-            height: calc(100vh - 120px);
+            justify-content: space-between;
         }
 
-        .task-pool, .time-grid {
-            background: var(--task-bg);
+        .bubble-pool, .my-list {
+            flex: 1;
+            background: #ffffff;
             border-radius: 10px;
             padding: 15px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            overflow-y: auto;
+            min-height: 400px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
-        .task-pool h3, .time-grid h3 {
+        .bubble-pool h3, .my-list h3 {
+            font-family: 'Poppins', sans-serif;
+            color: #2c5282;
+            font-size: 1.2rem;
             margin-bottom: 15px;
-            color: var(--primary);
-            font-weight: 500;
         }
 
-        .time-slot {
-            height: 60px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-        }
-
-        .time-label {
-            width: 50px;
-            font-size: 0.9rem;
-            color: var(--secondary);
-        }
-
-        .time-content {
-            flex: 1;
+        .bubble-area {
+            min-height: 300px;
             position: relative;
         }
 
-        .task-item, .planned-task {
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 6px;
-            padding: 8px;
-            margin: 5px 0;
-            cursor: grab;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            border-left: 4px solid var(--primary);
-            position: relative;
-        }
-
-        .planned-task {
-            position: absolute;
-            left: 0;
-            right: 0;
-            z-index: 10;
-        }
-
-        .task-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .task-name {
-            font-weight: 500;
-            font-size: 0.9rem;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .task-duration {
-            font-size: 0.8rem;
-            color: var(--secondary);
-        }
-
-        .task-actions {
-            display: none;
-            gap: 5px;
-        }
-
-        .task-item:hover .task-actions, .planned-task:hover .task-actions {
-            display: flex;
-        }
-
-        .task-actions button {
-            background: var(--light);
-            border: none;
-            width: 20px;
-            height: 20px;
+        .task-bubble {
+            width: 80px;
+            height: 80px;
+            background: #e2e8f0;
             border-radius: 50%;
-            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 10px;
-            transition: background 0.2s;
-        }
-
-        .task-actions button:hover {
-            background: var(--secondary);
-            color: white;
-        }
-
-        .task-resize {
+            text-align: center;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: #2d3748;
+            cursor: grab;
             position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 5px;
-            cursor: ns-resize;
-            background: rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+            border: 3px solid transparent;
+            transition: transform 0.2s, border-color 0.2s;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            padding: 5px;
         }
 
-        .add-task-btn {
-            width: 100%;
-            padding: 10px;
-            background: var(--primary);
+        .task-bubble:hover {
+            transform: scale(1.1);
+            border-color: #63b3ed;
+        }
+
+        .task-bubble.dragging {
+            opacity: 0.7;
+            cursor: grabbing;
+        }
+
+        .drop-zone {
+            border: 2px dashed #63b3ed;
+            background: #f7fafc;
+        }
+
+        .clear-list-btn {
+            margin-top: 10px;
+            padding: 8px 15px;
+            background: #f56565;
             color: white;
             border: none;
-            border-radius: 6px;
+            border-radius: 5px;
             cursor: pointer;
+            font-family: 'Poppins', sans-serif;
             font-weight: 500;
             transition: background 0.2s;
         }
 
-        .add-task-btn:hover {
-            background: var(--secondary);
+        .clear-list-btn:hover {
+            background: #c53030;
         }
 
         .modal {
@@ -202,7 +124,7 @@
             padding: 20px;
             border-radius: 10px;
             width: 90%;
-            max-width: 450px;
+            max-width: 400px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
 
@@ -214,8 +136,9 @@
         }
 
         .modal-title {
+            font-family: 'Poppins', sans-serif;
             font-size: 1.3rem;
-            color: var(--primary);
+            color: #2c5282;
         }
 
         .close-modal {
@@ -223,424 +146,197 @@
             border: none;
             font-size: 1.5rem;
             cursor: pointer;
-            color: var(--text);
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            font-weight: 500;
-            margin-bottom: 5px;
-            display: block;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid var(--border);
-            border-radius: 4px;
-            font-family: inherit;
-        }
-
-        textarea.form-control {
-            min-height: 60px;
-            resize: vertical;
-        }
-
-        .btn {
-            padding: 8px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: 500;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: var(--secondary);
-        }
-
-        .btn-danger {
-            background: var(--danger);
-            color: white;
-        }
-
-        .current-time {
-            position: absolute;
-            left: 50px;
-            right: 0;
-            height: 2px;
-            background: var(--accent);
-            z-index: 20;
-        }
-
-        .current-time::before {
-            content: '';
-            position: absolute;
-            left: -6px;
-            top: -3px;
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: var(--accent);
+            color: #2d3748;
         }
 
         @media (max-width: 768px) {
             .planner-container {
-                grid-template-columns: 1fr;
-                height: auto;
+                flex-direction: column;
             }
-            .task-pool, .time-grid {
-                height: 300px;
+            .bubble-pool, .my-list {
+                min-height: 300px;
             }
         }
     </style>
 </head>
 <body>
-    <div class="planner-header">
-        <h1 class="planner-title">ProTask Daily Planner</h1>
-        <div class="planner-date" id="currentDate"></div>
-    </div>
-
-    <div class="planner-container">
-        <div class="task-pool">
-            <h3>Task Pool</h3>
-            <div id="taskPool"></div>
-            <button class="add-task-btn" onclick="openModal()">Add Task</button>
-        </div>
-        <div class="time-grid">
-            <h3>Schedule</h3>
-            <div id="timeGrid"></div>
-            <div class="current-time" id="currentTime"></div>
+    <!-- Insert this after your existing <nav> in your main HTML -->
+    <div class="bubble-planner">
+        <h2 class="planner-title">Bubble Task Planner</h2>
+        <div class="planner-container">
+            <div class="bubble-pool">
+                <h3>All Tasks</h3>
+                <div id="bubblePool" class="bubble-area"></div>
+            </div>
+            <div class="my-list">
+                <h3>My List</h3>
+                <div id="myList" class="bubble-area drop-zone"></div>
+                <button class="clear-list-btn" onclick="clearMyList()">Clear List</button>
+            </div>
         </div>
     </div>
 
-    <div class="modal" id="taskModal">
+    <!-- Modal for Task Details -->
+    <div class="modal" id="bubbleModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title" id="modalTitle">Add Task</h3>
-                <button class="close-modal" onclick="closeModal()">×</button>
+                <h3 class="modal-title">Task Details</h3>
+                <button class="close-modal" onclick="closeBubbleModal()">×</button>
             </div>
-            <form id="taskForm">
-                <input type="hidden" id="taskId">
-                <div class="form-group">
-                    <label for="taskName">Task Name</label>
-                    <input type="text" class="form-control" id="taskName" required>
-                </div>
-                <div class="form-group">
-                    <label for="taskDuration">Duration (hours)</label>
-                    <input type="number" class="form-control" id="taskDuration" min="0.5" max="12" step="0.5" value="1" required>
-                </div>
-                <div class="form-group">
-                    <label for="taskPriority">Priority</label>
-                    <select class="form-control" id="taskPriority">
-                        <option value="#2c5282">Low</option>
-                        <option value="#ecc94b">Medium</option>
-                        <option value="#f56565">High</option>
-                    </select>
-                </div>
-                <div class="btn">
-                    <button type="submit" class="btn btn-primary">Save</button>
-                </div>
-            </form>
+            <div id="modalBody"></div>
         </div>
     </div>
 
     <script>
-        let tasks = [];
-        let schedule = [];
-        let draggedTask = null;
+        // Bubble Planner Variables
+        let bubbleTasks = [];
+        let myList = JSON.parse(localStorage.getItem('myBubbleList')) || [];
 
-        // Initialize the planner
-        function init() {
-            loadData();
-            renderDate();
-            renderTimeGrid();
-            renderTaskPool();
-            updateCurrentTime();
-            setInterval(updateCurrentTime, 60000);
+        // Initialize the Bubble Planner
+        function initBubblePlanner() {
+            loadBubbleTasks();
+            renderBubblePool();
+            renderMyList();
+            setupDragAndDrop();
         }
 
-        // Load tasks and schedule from localStorage
-        function loadData() {
-            tasks = JSON.parse(localStorage.getItem('tasks')) || [
-                { id: 't1', name: 'Team Meeting', duration: 1, priority: '#2c5282' },
-                { id: 't2', name: 'Project Review', duration: 2, priority: '#ecc94b' }
-            ];
-            schedule = JSON.parse(localStorage.getItem('schedule')) || [];
+        // Load tasks from existing localStorage 'tasks' key
+        function loadBubbleTasks() {
+            const savedTasks = JSON.parse(localStorage.getItem('tasks')) || { todo: [], 'in-progress': [], done: [] };
+            bubbleTasks = [
+                ...savedTasks.todo,
+                ...savedTasks['in-progress'],
+                ...savedTasks.done
+            ].map((task, index) => ({
+                id: `bubble-${index}-${Date.now()}`,
+                text: task.text,
+                priority: task.priority,
+                timer: task.timer,
+                dueDate: task.dueDate
+            }));
         }
 
-        // Save data to localStorage
-        function saveData() {
-            localStorage.setItem('tasks', JSON.stringify(tasks));
-            localStorage.setItem('schedule', JSON.stringify(schedule));
-        }
-
-        // Render current date
-        function renderDate() {
-            const date = new Date();
-            document.getElementById('currentDate').textContent = date.toLocaleDateString('en-US', {
-                weekday: 'long', month: 'long', day: 'numeric', year: 'numeric'
-            });
-        }
-
-        // Render time grid
-        function renderTimeGrid() {
-            const grid = document.getElementById('timeGrid');
-            grid.innerHTML = '';
-            for (let hour = 0; hour < 24; hour++) {
-                const slot = document.createElement('div');
-                slot.className = 'time-slot';
-                slot.innerHTML = `
-                    <div class="time-label">${hour.toString().padStart(2, '0')}:00</div>
-                    <div class="time-content" data-hour="${hour}"></div>
-                `;
-                grid.appendChild(slot);
-                setupDropZone(slot.querySelector('.time-content'));
-            }
-            renderSchedule();
-        }
-
-        // Render task pool
-        function renderTaskPool() {
-            const pool = document.getElementById('taskPool');
+        // Render all tasks as bubbles in the pool
+        function renderBubblePool() {
+            const pool = document.getElementById('bubblePool');
             pool.innerHTML = '';
-            tasks.forEach(task => {
-                const item = document.createElement('div');
-                item.className = 'task-item';
-                item.draggable = true;
-                item.dataset.id = task.id;
-                item.innerHTML = `
-                    <div class="task-header">
-                        <div class="task-name">${task.name}</div>
-                        <div class="task-duration">${task.duration}h</div>
-                    </div>
-                    <div class="task-actions">
-                        <button onclick="editTask('${task.id}')"><i class="fas fa-edit"></i></button>
-                        <button onclick="deleteTask('${task.id}')"><i class="fas fa-trash"></i></button>
-                    </div>
-                `;
-                item.style.borderLeftColor = task.priority;
-                pool.appendChild(item);
-                setupDrag(item);
+            bubbleTasks.forEach((task, index) => {
+                if (!task.text || task.text.trim() === "") return;
+                const bubble = createBubble(task, index);
+                pool.appendChild(bubble);
             });
         }
 
-        // Render scheduled tasks
-        function renderSchedule() {
-            schedule.forEach(task => {
-                const slot = document.querySelector(`.time-content[data-hour="${task.startHour}"]`);
-                if (slot) {
-                    const planned = document.createElement('div');
-                    planned.className = 'planned-task';
-                    planned.dataset.id = task.id;
-                    planned.style.top = `${task.startMinute}px`;
-                    planned.style.height = `${task.duration * 60 - 2}px`;
-                    planned.style.background = getPastelColor();
-                    const taskData = tasks.find(t => t.id === task.id);
-                    planned.innerHTML = `
-                        <div class="task-header">
-                            <div class="task-name">${taskData.name}</div>
-                            <div class="task-duration">${taskData.duration}h</div>
-                        </div>
-                        <div class="task-actions">
-                            <button onclick="editTask('${task.id}')"><i class="fas fa-edit"></i></button>
-                            <button onclick="removeFromSchedule('${task.id}')"><i class="fas fa-trash"></i></button>
-                        </div>
-                        <div class="task-resize"></div>
-                    `;
-                    planned.style.borderLeftColor = taskData.priority;
-                    slot.appendChild(planned);
-                    setupTaskInteractions(planned);
-                }
+        // Render user's prioritized list
+        function renderMyList() {
+            const list = document.getElementById('myList');
+            list.innerHTML = '';
+            myList.forEach((task, index) => {
+                const bubble = createBubble(task, index, true);
+                list.appendChild(bubble);
             });
         }
 
-        // Setup drag functionality
-        function setupDrag(item) {
-            item.addEventListener('dragstart', (e) => {
-                draggedTask = tasks.find(t => t.id === item.dataset.id);
-                e.dataTransfer.setData('text/plain', item.dataset.id);
-                item.style.opacity = '0.5';
-            });
-            item.addEventListener('dragend', () => {
-                item.style.opacity = '1';
-                draggedTask = null;
-            });
+        // Create a bubble element
+        function createBubble(task, index, inList = false) {
+            const bubble = document.createElement('div');
+            bubble.className = 'task-bubble';
+            bubble.dataset.id = task.id;
+            bubble.textContent = task.text;
+            bubble.style.background = getRandomColor(); // Reuse your existing function
+            bubble.style.borderColor = task.priority || '#2c5282';
+            bubble.style.left = inList ? '10px' : `${Math.random() * (pool.offsetWidth - 80)}px`;
+            bubble.style.top = inList ? `${index * 90}px` : `${Math.random() * (pool.offsetHeight - 80)}px`;
+            bubble.draggable = true;
+
+            bubble.addEventListener('click', () => showTaskDetails(task));
+            return bubble;
         }
 
-        // Setup drop zones
-        function setupDropZone(slot) {
-            slot.addEventListener('dragover', (e) => e.preventDefault());
-            slot.addEventListener('drop', (e) => {
+        // Setup drag-and-drop functionality
+        function setupDragAndDrop() {
+            const pool = document.getElementById('bubblePool');
+            const list = document.getElementById('myList');
+
+            document.querySelectorAll('.task-bubble').forEach(bubble => {
+                bubble.addEventListener('dragstart', (e) => {
+                    bubble.classList.add('dragging');
+                    e.dataTransfer.setData('text/plain', bubble.dataset.id);
+                });
+                bubble.addEventListener('dragend', () => {
+                    bubble.classList.remove('dragging');
+                });
+            });
+
+            list.addEventListener('dragover', (e) => e.preventDefault());
+            list.addEventListener('drop', (e) => {
                 e.preventDefault();
-                if (draggedTask) {
-                    const rect = slot.getBoundingClientRect();
-                    const y = e.clientY - rect.top;
-                    const startHour = parseInt(slot.dataset.hour);
-                    const startMinute = Math.max(0, Math.min(58, Math.floor(y / 60 * 60)));
-                    schedule.push({
-                        id: draggedTask.id,
-                        startHour,
-                        startMinute,
-                        duration: draggedTask.duration
-                    });
-                    saveData();
-                    renderSchedule();
+                const taskId = e.dataTransfer.getData('text/plain');
+                const task = bubbleTasks.find(t => t.id === taskId) || myList.find(t => t.id === taskId);
+                if (task && !myList.some(t => t.id === task.id)) {
+                    myList.push(task);
+                    saveMyList();
+                    renderMyList();
+                }
+            });
+
+            pool.addEventListener('dragover', (e) => e.preventDefault());
+            pool.addEventListener('drop', (e) => {
+                e.preventDefault();
+                const taskId = e.dataTransfer.getData('text/plain');
+                const taskIndex = myList.findIndex(t => t.id === taskId);
+                if (taskIndex !== -1) {
+                    myList.splice(taskIndex, 1);
+                    saveMyList();
+                    renderMyList();
                 }
             });
         }
 
-        // Setup task interactions (drag and resize)
-        function setupTaskInteractions(task) {
-            let isDragging = false, isResizing = false, startY, startTop, startHeight;
-
-            task.addEventListener('mousedown', (e) => {
-                if (e.target.className === 'task-resize') {
-                    isResizing = true;
-                    startY = e.clientY;
-                    startHeight = parseInt(task.style.height);
-                } else if (!e.target.closest('.task-actions')) {
-                    isDragging = true;
-                    startY = e.clientY;
-                    startTop = parseInt(task.style.top || '0');
-                }
-                document.addEventListener('mousemove', onMove);
-                document.addEventListener('mouseup', onUp);
-            });
-
-            function onMove(e) {
-                if (isDragging) {
-                    const newTop = startTop + (e.clientY - startY);
-                    task.style.top = `${Math.max(0, Math.min(58, newTop))}px`;
-                } else if (isResizing) {
-                    const newHeight = Math.max(30, startHeight + (e.clientY - startY));
-                    task.style.height = `${newHeight}px`;
-                }
-            }
-
-            function onUp() {
-                if (isDragging || isResizing) {
-                    const taskId = task.dataset.id;
-                    const slot = task.parentElement;
-                    const startHour = parseInt(slot.dataset.hour);
-                    const startMinute = parseInt(task.style.top || '0');
-                    const duration = Math.round(parseInt(task.style.height) / 60);
-                    const schedTask = schedule.find(t => t.id === taskId);
-                    if (schedTask) {
-                        schedTask.startHour = startHour;
-                        schedTask.startMinute = startMinute;
-                        schedTask.duration = duration;
-                        tasks.find(t => t.id === taskId).duration = duration;
-                    }
-                    saveData();
-                }
-                isDragging = isResizing = false;
-                document.removeEventListener('mousemove', onMove);
-                document.removeEventListener('mouseup', onUp);
-            }
+        // Save user's list to localStorage
+        function saveMyList() {
+            localStorage.setItem('myBubbleList', JSON.stringify(myList));
         }
 
-        // Modal functions
-        function openModal(id = null) {
-            const modal = document.getElementById('taskModal');
-            const form = document.getElementById('taskForm');
-            const title = document.getElementById('modalTitle');
-            const task = id ? tasks.find(t => t.id === id) : null;
+        // Clear user's list
+        function clearMyList() {
+            myList = [];
+            saveMyList();
+            renderMyList();
+        }
 
-            if (task) {
-                title.textContent = 'Edit Task';
-                document.getElementById('taskId').value = task.id;
-                document.getElementById('taskName').value = task.name;
-                document.getElementById('taskDuration').value = task.duration;
-                document.getElementById('taskPriority').value = task.priority;
-            } else {
-                title.textContent = 'Add Task';
-                form.reset();
-                document.getElementById('taskId').value = `t${Date.now()}`;
-                document.getElementById('taskDuration').value = 1;
-            }
+        // Show task details in modal
+        function showTaskDetails(task) {
+            const modal = document.getElementById('bubbleModal');
+            const body = document.getElementById('modalBody');
+            body.innerHTML = `
+                <p><strong>Name:</strong> ${task.text}</p>
+                <p><strong>Priority:</strong> <span style="background: ${task.priority}; width: 20px; height: 20px; display: inline-block;"></span></p>
+                <p><strong>Time Spent:</strong> ${task.timer}</p>
+                ${task.dueDate ? `<p><strong>Due:</strong> ${new Date(task.dueDate).toLocaleString()}</p>` : ''}
+            `;
             modal.style.display = 'flex';
         }
 
-        function closeModal() {
-            document.getElementById('taskModal').style.display = 'none';
+        // Close task details modal
+        function closeBubbleModal() {
+            document.getElementById('bubbleModal').style.display = 'none';
         }
 
-        document.getElementById('taskForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const id = document.getElementById('taskId').value;
-            const name = document.getElementById('taskName').value.trim();
-            const duration = parseFloat(document.getElementById('taskDuration').value);
-            const priority = document.getElementById('taskPriority').value;
-
-            if (!name) {
-                alert('Task name is required!');
-                return;
-            }
-
-            const taskIndex = tasks.findIndex(t => t.id === id);
-            const newTask = { id, name, duration, priority };
-            if (taskIndex >= 0) {
-                tasks[taskIndex] = newTask;
-            } else {
-                tasks.push(newTask);
-            }
-            saveData();
-            renderTaskPool();
-            closeModal();
-        });
-
-        // Task management
-        function editTask(id) {
-            openModal(id);
-        }
-
-        function deleteTask(id) {
-            if (confirm('Delete this task?')) {
-                tasks = tasks.filter(t => t.id !== id);
-                schedule = schedule.filter(t => t.id !== id);
-                saveData();
-                renderTaskPool();
-                renderSchedule();
-            }
-        }
-
-        function removeFromSchedule(id) {
-            schedule = schedule.filter(t => t.id !== id);
-            saveData();
-            renderSchedule();
-        }
-
-        // Update current time indicator
-        function updateCurrentTime() {
-            const now = new Date();
-            const hours = now.getHours();
-            const minutes = now.getMinutes();
-            const indicator = document.getElementById('currentTime');
-            const slot = document.querySelector(`.time-content[data-hour="${hours}"]`);
-            if (slot) {
-                const slotTop = slot.getBoundingClientRect().top - document.getElementById('timeGrid').getBoundingClientRect().top;
-                indicator.style.top = `${slotTop + (minutes / 60 * 60)}px`;
-            }
-        }
-
-        // Utility: Generate pastel color
-        function getPastelColor() {
-            const r = Math.floor(Math.random() * 128 + 127);
-            const g = Math.floor(Math.random() * 128 + 127);
-            const b = Math.floor(Math.random() * 128 + 127);
+        // Reuse your existing getRandomColor function
+        function getRandomColor() {
+            var r = Math.floor(Math.random() * 156) + 100;
+            var g = Math.floor(Math.random() * 156) + 100;
+            var b = Math.floor(Math.random() * 156) + 100;
             return `rgb(${r}, ${g}, ${b})`;
         }
 
-        // Start the app
-        document.addEventListener('DOMContentLoaded', init);
+        // Initialize planner after DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            const pool = document.getElementById('bubblePool');
+            pool.style.position = 'relative'; // Ensure pool dimensions are set
+            initBubblePlanner();
+        });
     </script>
 </body>
 </html>
