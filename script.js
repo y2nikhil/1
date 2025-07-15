@@ -683,3 +683,72 @@ function attachTimerEvents(task) {
         });
     }
 }
+// Background Animation Initialization
+function initBackgroundAnimation() {
+    const background = document.createElement('div');
+    background.className = 'background-animation';
+    document.body.appendChild(background);
+
+    // Create particles
+    for (let i = 0; i < 20; i++) {
+        createParticle(background);
+    }
+
+    // Create grid pattern
+    const grid = document.createElement('div');
+    grid.className = 'grid-pattern';
+    background.appendChild(grid);
+
+    // Create geometric shapes
+    createShape(background, 'triangle', '10%', '20%');
+    createShape(background, 'circle', '80%', '30%');
+    createShape(background, 'square', '15%', '70%');
+    createShape(background, 'hexagon', '85%', '75%');
+
+    // Create pulse waves
+    for (let i = 0; i < 3; i++) {
+        const pulse = document.createElement('div');
+        pulse.className = 'pulse';
+        background.appendChild(pulse);
+    }
+}
+
+function createParticle(container) {
+    const particle = document.createElement('div');
+    particle.className = 'particle';
+    
+    // Random size between 3px and 10px
+    const size = Math.random() * 7 + 3;
+    particle.style.width = `${size}px`;
+    particle.style.height = `${size}px`;
+    
+    // Random position
+    particle.style.left = `${Math.random() * 100}%`;
+    particle.style.bottom = `-${size}px`;
+    
+    // Random animation duration and delay
+    particle.style.animationDuration = `${Math.random() * 10 + 10}s`;
+    particle.style.animationDelay = `${Math.random() * 5}s`;
+    
+    // Random color variation
+    const hue = Math.random() * 30 + 270; // Purple/pink range
+    particle.style.background = `linear-gradient(135deg, hsl(${hue}, 70%, 70%), hsl(${hue + 20}, 70%, 70%))`;
+    
+    container.appendChild(particle);
+}
+
+function createShape(container, type, left, top) {
+    const shape = document.createElement('div');
+    shape.className = `shape ${type}`;
+    shape.style.left = left;
+    shape.style.top = top;
+    
+    // Random animation duration and delay
+    shape.style.animationDuration = `${Math.random() * 20 + 20}s`;
+    shape.style.animationDelay = `${Math.random() * 10}s`;
+    
+    container.appendChild(shape);
+}
+
+// Initialize the background animation when the page loads
+document.addEventListener('DOMContentLoaded', initBackgroundAnimation);
